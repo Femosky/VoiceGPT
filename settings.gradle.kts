@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Group6FinalGroupProject"
 include(":app")
+include(":mobile")
