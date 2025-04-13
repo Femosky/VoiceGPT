@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Group6FinalGroupProject</string>
+    <string name="test_string">Test </string>
+    <string name="mic_button_description">Mic Button</string>
+    <string name="response_textview">Response goes here</string>
+    <string name="prompt_textview">Prompt goes here</string>
+    <string name="tts_init_failed">Text to Speech initialization failed</string>
+</resources>

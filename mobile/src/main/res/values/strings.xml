@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Mobile</string>
     <string name="test_string">Test</string>
+    <string name="string_URL_endpoint">https://api.openai.com/v1/chat/completions</string>
+    <string name="enter_message">Enter message</string>
+    <string name="voice_input">Voice Input</string>
+    <string name="sync">Sync</string>
+    <string name="prompt_input_hint">Prompt Input</string>
+    <string name="syncing_data">"Syncing data…"</string>
 </resources>

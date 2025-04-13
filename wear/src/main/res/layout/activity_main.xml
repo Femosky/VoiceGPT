@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/box_inset_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- TextView to display the response from ChatGPT -->
+        <TextView
+            android:id="@+id/responseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/response_textview"
+            android:textSize="14sp"
+            android:paddingTop="16dp"
+            android:visibility="invisible"/>
+
+        <!-- TextView to display the Prompt before a response is gotten from ChatGPT -->
+        <TextView
+            android:id="@+id/promptText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_textview"
+            android:textSize="14sp"
+            android:paddingTop="16dp" />
+
+        <!-- Microphone Button for Voice Input -->
+        <ImageButton
+            android:id="@+id/micButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mic"
+            android:contentDescription="@string/mic_button_description" />
+
+        <!-- Buttons for Post-Response Options (Re-listen, Follow-Up, New Conversation)
+             can be added here as needed. -->
+
+    </LinearLayout>
+
+</androidx.wear.widget.BoxInsetLayout>
