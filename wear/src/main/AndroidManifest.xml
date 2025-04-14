@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar">
         <activity
+            android:name=".activity.ChatRoomActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ChatHistoryActivity"
             android:exported="false" />
         <activity

@@ -1,6 +1,7 @@
 package com.example.group6finalgroupproject.service;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.example.group6finalgroupproject.BuildConfig;
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.activity.ChatRoomActivity;
 import com.example.group6finalgroupproject.activity.MainActivity;
 import com.example.group6finalgroupproject.helper.ChatRoomManager;
 import com.example.group6finalgroupproject.model.ChatResponse;
@@ -139,6 +141,10 @@ public class ChatGPTAPI {
 
                         // Save chatroom to shared preferences
                         ChatResponseUtils.saveMessage(chatRoom, context);
+
+                        Intent intent = new Intent(context, ChatRoomActivity.class);
+                        intent.putExtra("chat_room_id", chatRoom.getId());
+                        context.startActivity(intent); // Takes us to the Chat Room screen
 
                         Log.i("CHAT RESPONSE", result);
 

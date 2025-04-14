@@ -1,0 +1,59 @@
+package com.example.group6finalgroupproject.adapter;
+
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.group6finalgroupproject.databinding.ActivityChatHistoryBinding;
+import com.example.group6finalgroupproject.databinding.ActivityChatRoomBinding;
+import com.example.group6finalgroupproject.databinding.ChatHistoryItemBinding;
+import com.example.group6finalgroupproject.databinding.ChatRoomItemBinding;
+import com.example.group6finalgroupproject.model.ChatRoom;
+import com.example.group6finalgroupproject.model.MessageItem;
+
+import java.util.List;
+
+public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder> {
+    private ChatRoom chatRoom;
+    ActivityChatRoomBinding binding;
+
+    public ChatRoomAdapter(ChatRoom room) {
+//        super();
+        this.chatRoom = room;
+    }
+
+    @NonNull
+    @Override
+    public ChatRoomAdapter.ChatRoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ChatRoomItemBinding binding = ChatRoomItemBinding.inflate(layoutInflater, parent, false);
+        return new ChatRoomAdapter.ChatRoomViewHolder(binding);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ChatRoomAdapter.ChatRoomViewHolder holder, int position) {
+        MessageItem messageItem = chatRoom.getChatList().get(position);
+        holder.bind(messageItem);
+    }
+
+    @Override
+    public int getItemCount() {
+        return chatRoom.getChatList().size();
+    }
+
+    public static class ChatRoomViewHolder extends RecyclerView.ViewHolder {
+        private final ChatRoomItemBinding binding;
+
+        public ChatRoomViewHolder(ChatRoomItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(MessageItem messageItem) {
+            String message = messageItem.getMessage();
+            binding.messageItem.setText(message);
+        }
+    }
+}

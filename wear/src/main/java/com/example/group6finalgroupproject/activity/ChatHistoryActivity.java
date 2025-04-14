@@ -1,5 +1,6 @@
 package com.example.group6finalgroupproject.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +51,14 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
         ChatHistoryAdapter adapter = new ChatHistoryAdapter(chatRooms);
+        adapter.setOnItemClickListener(new ChatHistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(ChatRoom chatRoom) {
+                Intent intent = new Intent(ChatHistoryActivity.this, ChatRoomActivity.class);
+                intent.putExtra("chat_room_id", chatRoom.getId());
+                startActivity(intent); // Takes us to the Chat Room screen
+            }
+        });
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
