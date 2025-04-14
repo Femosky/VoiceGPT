@@ -27,7 +27,7 @@ public class ChatRoom {
         this.title = title;
     }
 
-    public String getCreated() { return title; }
+    public long getCreated() { return created; }
     public void setCreated(long created) {
         this.created = created;
     }

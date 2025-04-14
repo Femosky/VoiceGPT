@@ -44,7 +44,9 @@ public class ChatHistoryActivity extends AppCompatActivity {
         recyclerView.setEdgeItemsCenteringEnabled(true);
 
         chatRooms = ChatResponseUtils.getChatRooms(this);
-        Log.i("VALUE IS", chatRooms.get(0).getTitle());
+        if (chatRooms.size() > 0) {
+            Log.i("VALUE IS", chatRooms.get(0).getTitle());
+        }
 
         recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
         ChatHistoryAdapter adapter = new ChatHistoryAdapter(chatRooms);

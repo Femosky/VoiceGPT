@@ -122,13 +122,24 @@ public class ChatGPTAPI {
                         String result = botResponse.getContent();
                         messageItem.setMessage(result);
 
-                        chatRoom.appendChatList(messageItem);
-                        chatRoom.setTitle(result); // FOR NOW, CHANGE LATER IF POSSIBLE!!!
-                        long timestampSeconds = System.currentTimeMillis() / 1000;
-                        chatRoom.setCreated(timestampSeconds);
+                        if (chatRoom.getChatList().isEmpty()) {
+                            Log.i("CAME HERE", "IT DID");
+                            // SET NEW TITLE AND DATE
+                            chatRoom.setTitle(result); // FOR NOW, CHANGE LATER IF POSSIBLE!!!
 
-                        // Save prompt response to shared preferences
+                            long timestampSeconds = System.currentTimeMillis() / 1000;
+                            chatRoom.setCreated(timestampSeconds);
+                        } else {
+                            // GRAB FIRST MESSAGE'S TITLE AND DATE
+                            chatRoom.setTitle(chatRoom.getTitle());
+                            chatRoom.setCreated(chatRoom.getCreated());
+                        }
+
+                        chatRoom.appendChatList(messageItem);
+
+                        // Save chatroom to shared preferences
                         ChatResponseUtils.saveMessage(chatRoom, context);
+
                         Log.i("CHAT RESPONSE", result);
 
                     } catch (Exception e) {

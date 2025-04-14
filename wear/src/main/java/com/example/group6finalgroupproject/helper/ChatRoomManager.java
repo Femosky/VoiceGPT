@@ -17,4 +17,8 @@ public class ChatRoomManager {
     public static void setChatRoom(ChatRoom chatRoom) {
         instance = chatRoom;
     }
+
+    public static int getLength() {
+        return instance.getChatList().size();
+    }
 }
