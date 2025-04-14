@@ -21,14 +21,29 @@
             android:paddingTop="16dp"
             android:visibility="invisible"/>
 
-        <!-- TextView to display the Prompt before a response is gotten from ChatGPT -->
-        <TextView
-            android:id="@+id/promptText"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/prompt_textview"
-            android:textSize="14sp"
-            android:paddingTop="16dp" />
+            android:orientation="horizontal"
+            >
+
+            <!-- EditView to display the Prompt before a response is gotten from ChatGPT -->
+            <EditText
+                android:id="@+id/promptText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_textview"
+                android:textSize="14sp"
+                android:paddingTop="16dp" />
+
+            <ImageButton
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_send_arrow"
+                android:contentDescription="@string/send_button_icon_description" />
+
+        </LinearLayout>
 
         <!-- Microphone Button for Voice Input -->
         <ImageButton

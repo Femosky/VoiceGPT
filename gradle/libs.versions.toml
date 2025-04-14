@@ -11,6 +11,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 okhttp = "5.0.0-alpha.14"
 retrofit = "2.11.0"
+gson = "2.13.0"
 
 [libraries]
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
@@ -24,6 +25,7 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitV
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version = "4.12.0" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version = "2.11.0" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

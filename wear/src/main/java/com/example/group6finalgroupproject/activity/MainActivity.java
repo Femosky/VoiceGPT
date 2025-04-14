@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.databinding.ActivityMainBinding;
+import com.example.group6finalgroupproject.service.ChatGPTAPI;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -54,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Set up listener for sending prompt
+        binding.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userPrompt = binding.promptText.getText().toString();
+
+                if (userPrompt.isEmpty()) {
+                    Toast.makeText(MainActivity.this, getString(R.string.empty_prompt_error_message), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                ChatGPTAPI.postPrompt(MainActivity.this, userPrompt);
+            }
+        });
+
         // Set up mic button listener
         binding.micButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,10 +91,21 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
-                binding.promptText.setText(results.get(0));
+                String userPrompt = results.get(0);
+                binding.promptText.setText(userPrompt);
 
                 // Send the prompt to through the ChatGPT API for a response
+                ChatGPTAPI.postPrompt(this, userPrompt);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
     }
 }
