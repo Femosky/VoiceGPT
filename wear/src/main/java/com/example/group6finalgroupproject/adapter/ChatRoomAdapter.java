@@ -1,11 +1,13 @@
 package com.example.group6finalgroupproject.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.databinding.ActivityChatHistoryBinding;
 import com.example.group6finalgroupproject.databinding.ActivityChatRoomBinding;
 import com.example.group6finalgroupproject.databinding.ChatHistoryItemBinding;
@@ -22,6 +24,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
     public ChatRoomAdapter(ChatRoom room) {
 //        super();
         this.chatRoom = room;
+    }
+
+    // Setters
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 
     @NonNull
@@ -52,8 +59,13 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
         }
 
         public void bind(MessageItem messageItem) {
+            Context context = binding.getRoot().getContext();
             String message = messageItem.getMessage();
             binding.messageItem.setText(message);
+            if (messageItem.getFrom().equals(context.getString(R.string.user_string))) {
+                int userBgColor = androidx.core.content.ContextCompat.getColor(context, R.color.user_background);
+                binding.linearLayout.setBackgroundColor(userBgColor);
+            }
         }
     }
 }

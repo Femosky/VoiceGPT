@@ -38,4 +38,11 @@ public class ChatRoom {
     public void appendChatList(MessageItem messageItem) {
         this.chatList.add(messageItem);
     }
+
+    public void resetChatRoom() {
+        this.id = UUID.randomUUID().toString();
+        this.title = null;
+        this.created = System.currentTimeMillis() / 1000;
+        this.chatList.clear();
+    }
 }

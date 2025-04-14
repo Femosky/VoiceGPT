@@ -38,7 +38,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class ChatGPTAPI {
-    private static JSONObject parseStringToJSONObject(Context context, String userPrompt) {
+    private static JSONObject parseStringToJSONObject(Context context, ChatRoom contextChatRoom, String userPrompt) {
         // Build the chat completion payload
         try {
             JSONObject jsonObject = new JSONObject();
@@ -46,9 +46,23 @@ public class ChatGPTAPI {
             jsonObject.put(context.getString(R.string.store_string), true);
 
             JSONArray jsonArrayMessage = new JSONArray();
+
+            // Insert all past prompt to keep the chat room context going if chatroom is not empty
+            if (!contextChatRoom.getChatList().isEmpty()) {
+                for (MessageItem messageItem : contextChatRoom.getChatList()) {
+                    JSONObject jsonObjectMessage = new JSONObject();
+                    String from = messageItem.getFrom();
+                    jsonObjectMessage.put(context.getString(R.string.role_string), from);
+                    jsonObjectMessage.put(context.getString(R.string.content_string), from.equals(context.getString(R.string.assistant_string)) ? messageItem.getMessage() : context.getString(R.string.pre_prompt_for_length) + messageItem.getMessage());
+                    jsonArrayMessage.put(jsonObjectMessage);
+
+                    jsonObject.put(context.getString(R.string.messages_string), jsonArrayMessage);
+                }
+            }
+
             JSONObject jsonObjectMessage = new JSONObject();
             jsonObjectMessage.put(context.getString(R.string.role_string), context.getString(R.string.user_string));
-            jsonObjectMessage.put(context.getString(R.string.content_string), userPrompt);
+            jsonObjectMessage.put(context.getString(R.string.content_string), context.getString(R.string.pre_prompt_for_length) + userPrompt);
             jsonArrayMessage.put(jsonObjectMessage);
 
             jsonObject.put(context.getString(R.string.messages_string), jsonArrayMessage);
@@ -59,13 +73,13 @@ public class ChatGPTAPI {
             return null;
         }
     }
-    public static void postPrompt(Context context, String userPrompt) {
+    public static void postPrompt(Context context, ChatRoom contextChatRoom, String userPrompt, long timestamp, Boolean cameFromChatRoomScreen) {
         if (userPrompt.isEmpty()) {
             // Don't send a prompt query if the user prompt is empty
             return;
         }
 
-        JSONObject payloadObject = parseStringToJSONObject(context, userPrompt);
+        JSONObject payloadObject = parseStringToJSONObject(context, contextChatRoom, userPrompt);
 
 
         if (payloadObject == null) {
@@ -110,14 +124,27 @@ public class ChatGPTAPI {
 
                         // PARSE AND RETURN THE CHAT COMPLETION RESPONSE TO a ChatResponse object
 
-                        ChatRoom chatRoom = ChatRoomManager.getChatRoom();
+                        ChatRoom chatRoom = new ChatRoom();
+                        if (contextChatRoom.getChatList().isEmpty()) {
+                            chatRoom = ChatRoomManager.getChatRoom();
+                        } else {
+                            chatRoom = contextChatRoom;
+                        }
 
                         ChatResponse chatResponse = gson.fromJson(responseBody.string(), ChatResponse.class);
 
+                        // the User's prompt
+                        MessageItem userMessageItem = new MessageItem();
+                        userMessageItem.setCreated(timestamp);
+                        userMessageItem.setFrom(context.getString(R.string.user_string));
+                        userMessageItem.setModel(chatResponse.getModel());
+                        userMessageItem.setMessage(userPrompt);
+
+                        // The Assistant's response
                         MessageItem messageItem = new MessageItem();
                         messageItem.setCreated(chatResponse.getCreated());
+                        messageItem.setFrom(context.getString(R.string.assistant_string));
                         messageItem.setModel(chatResponse.getModel());
-                        messageItem.setFrom(context.getString(R.string.bot_string));
 
                         List<Choice> choices = chatResponse.getChoices();
                         Message botResponse = choices.get(0).getMessage();
@@ -137,14 +164,22 @@ public class ChatGPTAPI {
                             chatRoom.setCreated(chatRoom.getCreated());
                         }
 
+                        chatRoom.appendChatList(userMessageItem);
                         chatRoom.appendChatList(messageItem);
 
                         // Save chatroom to shared preferences
                         ChatResponseUtils.saveMessage(chatRoom, context);
 
-                        Intent intent = new Intent(context, ChatRoomActivity.class);
-                        intent.putExtra("chat_room_id", chatRoom.getId());
-                        context.startActivity(intent); // Takes us to the Chat Room screen
+                        if (cameFromChatRoomScreen == true) { // REFRESH THE CHATROOM SCREEN
+                            if (context instanceof ChatRoomActivity) {
+                                ((ChatRoomActivity) context).refreshChatRoom();
+                                Log.i("NEW CODE RAN HERE", "YES");
+                            }
+                        } else { // TAKE US TO THE CHATROOM SCREEN
+                            Intent intent = new Intent(context, ChatRoomActivity.class);
+                            intent.putExtra("chat_room_id", chatRoom.getId());
+                            context.startActivity(intent); // Takes us to the Chat Room screen
+                        }
 
                         Log.i("CHAT RESPONSE", result);
 

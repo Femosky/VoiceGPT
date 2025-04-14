@@ -21,7 +21,11 @@
     <string name="empty_prompt_error_message">Please enter a prompt first</string>
     <string name="chats_sharedPreferencesKey">Chats</string>
     <string name="chats_sharedPreferencesPrefix">chat_</string>
-    <string name="bot_string">bot</string>
+    <string name="assistant_string">assistant</string>
     <string name="chat_history">Chat History</string>
     <string name="chat_history_button">Chat History</string>
+    <string name="max_tokens_string">max_tokens</string>
+    <string name="pre_prompt_for_length">"In a max of a ten word sentence, briefly answer: "</string>
+    <string name="reset_button_description">Reset Button</string>
+    <string name="empty_string" />
 </resources>

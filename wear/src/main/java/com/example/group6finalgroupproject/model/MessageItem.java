@@ -4,10 +4,9 @@ import java.util.UUID;
 
 public class MessageItem {
     private String id;
-    private String chatId;
     private long created;
     private String model;
-    private String from; // Must be either "bot" or "user"
+    private String from; // Must be either "assistant" or "user"
     private String message;
 
     // Assign an ID to each ChatRoom Object
@@ -36,14 +35,14 @@ public class MessageItem {
     }
 
     public String getFrom() {
-        return model;
+        return from;
     }
     public void setFrom(String from) {
         this.from = from;
     }
 
     public String getMessage() {
-        return model;
+        return message;
     }
     public void setMessage(String message) {
         this.message = message;

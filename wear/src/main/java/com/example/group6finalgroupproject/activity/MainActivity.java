@@ -70,7 +70,17 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                ChatGPTAPI.postPrompt(MainActivity.this, userPrompt);
+                long timestamp = System.currentTimeMillis() / 1000;
+                ChatGPTAPI.postPrompt(MainActivity.this, chatRoom, userPrompt, timestamp, false);
+            }
+        });
+
+        // Set up mic button listener
+        binding.resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.promptText.setText(R.string.empty_string);
+                chatRoom.resetChatRoom();
             }
         });
 
@@ -107,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 binding.promptText.setText(userPrompt);
 
                 // Send the prompt to through the ChatGPT API for a response
-                ChatGPTAPI.postPrompt(this, userPrompt);
+                long timestamp = System.currentTimeMillis() / 1000;
+                ChatGPTAPI.postPrompt(this, chatRoom, userPrompt, timestamp, false);
             }
         }
     }
