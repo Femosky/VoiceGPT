@@ -3,8 +3,10 @@ package com.example.group6finalgroupproject.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +21,14 @@ import com.example.group6finalgroupproject.adapter.ChatHistoryAdapter;
 import com.example.group6finalgroupproject.adapter.ChatRoomAdapter;
 import com.example.group6finalgroupproject.databinding.ActivityChatRoomBinding;
 import com.example.group6finalgroupproject.model.ChatRoom;
+import com.example.group6finalgroupproject.model.MessageItem;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
@@ -33,6 +37,9 @@ public class ChatRoomActivity extends AppCompatActivity {
     private ChatRoom chatRoom;
     private ChatRoomAdapter adapter;
     private String chatRoomId;
+    private TextToSpeech textToSpeech;
+    private boolean ttsInitialized = false;
+    private String queuedText = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,27 @@ public class ChatRoomActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = textToSpeech.setLanguage(Locale.getDefault());
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                            result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("ChatRoomActivity", "Language is not supported");
+                    } else {
+                        ttsInitialized = true;
+                        // If any text was queued, speak it now.
+                        if (queuedText != null) {
+                            speakText(queuedText);
+                            queuedText = null;
+                        }
+                    }
+                } else {
+                    Toast.makeText(ChatRoomActivity.this, getString(R.string.tts_init_failed), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         init();
     }
 
@@ -51,7 +79,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setEdgeItemsCenteringEnabled(true);
 
-        chatRoomId = getIntent().getStringExtra("chat_room_id");
+        chatRoomId = getIntent().getStringExtra(getString(R.string.chat_room_id));
         chatRoom = ChatResponseUtils.getChatRoom(this, chatRoomId);
 
         recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
@@ -75,6 +103,28 @@ public class ChatRoomActivity extends AppCompatActivity {
                 startVoiceInputCapture();
             }
         });
+
+        // If cameFromMainActivity, run the voice to text
+        boolean cameFromMainActivity = getIntent().getBooleanExtra(getString(R.string.came_from_main_activity), false);
+        Log.i("CAMEFROMMAINACTIVITY", String.valueOf(cameFromMainActivity));
+
+        if (cameFromMainActivity && !chatRoom.getChatList().isEmpty()) {
+            String response = chatRoom.getChatList().get(chatRoom.getChatList().size() - 1).getMessage();
+            Log.i("RESPONSE IS: ", response);
+            speakText(response);
+        }
+    }
+
+    public void speakText(String text) {
+        if (textToSpeech != null) {
+            if (!ttsInitialized) {
+                // TTS is still initializing, so store text in a queue
+                queuedText = text;
+                Log.i("ChatRoomActivity", "TTS not initialized, queuing text.");
+            } else {
+                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utteranceId");
+            }
+        }
     }
 
     // The refresh method to re-load the chatroom data
@@ -84,6 +134,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.setChatRoom(chatRoom);
             adapter.notifyDataSetChanged();
+
+            // Scroll to the bottom - last item
+            binding.recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
         }
         Log.i("ChatRoomActivity", "Chat room refreshed!");
     }

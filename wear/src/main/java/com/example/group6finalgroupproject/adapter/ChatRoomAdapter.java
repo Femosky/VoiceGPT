@@ -65,6 +65,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
             if (messageItem.getFrom().equals(context.getString(R.string.user_string))) {
                 int userBgColor = androidx.core.content.ContextCompat.getColor(context, R.color.user_background);
                 binding.linearLayout.setBackgroundColor(userBgColor);
+            } else {
+                int userBgColor = androidx.core.content.ContextCompat.getColor(context, R.color.assistant_background);
+                binding.linearLayout.setBackgroundColor(userBgColor);
             }
         }
     }

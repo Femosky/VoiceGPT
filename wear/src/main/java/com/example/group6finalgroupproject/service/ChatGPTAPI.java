@@ -172,12 +172,21 @@ public class ChatGPTAPI {
 
                         if (cameFromChatRoomScreen == true) { // REFRESH THE CHATROOM SCREEN
                             if (context instanceof ChatRoomActivity) {
-                                ((ChatRoomActivity) context).refreshChatRoom();
-                                Log.i("NEW CODE RAN HERE", "YES");
+                                // Ensure this runs on the UI thread
+                                ((ChatRoomActivity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Refresh the chat room
+                                        ((ChatRoomActivity) context).refreshChatRoom();
+                                        // Speak the latest assistant response
+                                        ((ChatRoomActivity) context).speakText(result);
+                                    }
+                                });
                             }
                         } else { // TAKE US TO THE CHATROOM SCREEN
                             Intent intent = new Intent(context, ChatRoomActivity.class);
-                            intent.putExtra("chat_room_id", chatRoom.getId());
+                            intent.putExtra(context.getString(R.string.chat_room_id), chatRoom.getId());
+                            intent.putExtra(context.getString(R.string.came_from_main_activity), true);
                             context.startActivity(intent); // Takes us to the Chat Room screen
                         }
 
