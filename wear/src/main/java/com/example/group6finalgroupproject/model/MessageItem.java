@@ -1,19 +1,24 @@
 package com.example.group6finalgroupproject.model;
 
+import java.util.UUID;
+
 public class MessageItem {
     private String id;
+    private String chatId;
     private long created;
     private String model;
     private String from; // Must be either "bot" or "user"
     private String message;
 
+    // Assign an ID to each ChatRoom Object
+    public MessageItem() {
+        this.id = UUID.randomUUID().toString();
+    }
+
     // Getters and setters
 
     public String getId() {
         return id;
-    }
-    public void setId(String id) {
-        this.id = id;
     }
 
     public long getCreated() {

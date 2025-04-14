@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.databinding.ActivityMainBinding;
+import com.example.group6finalgroupproject.helper.ChatRoomManager;
+import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech textToSpeech;
     private static final int SPEECH_REQUEST_CODE = 100;
     private String lastResponse = "";
+
+    ChatRoom chatRoom = ChatRoomManager.getChatRoom();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startVoiceInputCapture();
+            }
+        });
+
+        // Set up Chat history button listener
+        binding.viewChatHistoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ChatHistoryActivity.class));
             }
         });
     }

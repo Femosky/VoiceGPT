@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import com.example.group6finalgroupproject.BuildConfig;
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.activity.MainActivity;
+import com.example.group6finalgroupproject.helper.ChatRoomManager;
 import com.example.group6finalgroupproject.model.ChatResponse;
+import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.Choice;
 import com.example.group6finalgroupproject.model.ErrorData;
 import com.example.group6finalgroupproject.model.ErrorResponse;
@@ -35,11 +37,8 @@ import okhttp3.ResponseBody;
 
 public class ChatGPTAPI {
     private static JSONObject parseStringToJSONObject(Context context, String userPrompt) {
-        String payload = "";
-
         // Build the chat completion payload
         try {
-            String payloadTemplate = context.getString(R.string.chatGPT_payload_template);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(context.getString(R.string.model_string), context.getString(R.string.chatGPT_payload_model));
             jsonObject.put(context.getString(R.string.store_string), true);
@@ -109,20 +108,29 @@ public class ChatGPTAPI {
 
                         // PARSE AND RETURN THE CHAT COMPLETION RESPONSE TO a ChatResponse object
 
+                        ChatRoom chatRoom = ChatRoomManager.getChatRoom();
+
                         ChatResponse chatResponse = gson.fromJson(responseBody.string(), ChatResponse.class);
 
                         MessageItem messageItem = new MessageItem();
-                        messageItem.setId(chatResponse.getId());
                         messageItem.setCreated(chatResponse.getCreated());
                         messageItem.setModel(chatResponse.getModel());
                         messageItem.setFrom(context.getString(R.string.bot_string));
 
                         List<Choice> choices = chatResponse.getChoices();
                         Message botResponse = choices.get(0).getMessage();
-                        messageItem.setMessage(botResponse.toString());
+                        String result = botResponse.getContent();
+                        messageItem.setMessage(result);
+
+                        chatRoom.appendChatList(messageItem);
+                        chatRoom.setTitle(result); // FOR NOW, CHANGE LATER IF POSSIBLE!!!
+                        long timestampSeconds = System.currentTimeMillis() / 1000;
+                        chatRoom.setCreated(timestampSeconds);
 
                         // Save prompt response to shared preferences
-                        ChatResponseUtils.saveMessage(messageItem, context);
+                        ChatResponseUtils.saveMessage(chatRoom, context);
+                        Log.i("CHAT RESPONSE", result);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

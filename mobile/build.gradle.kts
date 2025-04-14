@@ -16,7 +16,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // ChaGPT API Key
-        val chatGPTApiKey: String = project.findProperty("CHATGPT_API_KEY") as? String ?: "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"
+        val chatGPTApiKey: String = project.findProperty("CHATGPT_API_KEY") as? String ?: "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"
         buildConfigField("String", "CHATGPT_API_KEY", "\"$chatGPTApiKey\"" )
     }
 

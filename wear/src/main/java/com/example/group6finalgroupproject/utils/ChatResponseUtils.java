@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.MessageItem;
 import com.google.gson.Gson;
 
@@ -15,22 +16,39 @@ import java.util.Set;
 
 public class ChatResponseUtils {
     // Save the task in SharedPreferences as a JSON string
-    public static void saveMessage(MessageItem messageItem, Context context) {
-        if (messageItem != null) {
+    public static void saveMessage(ChatRoom chatRoom, Context context) {
+        if (chatRoom != null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPrefs.edit();
 
             // Parse to JSON for storage
             Gson gson = new Gson();
-            String json = gson.toJson(messageItem);
-            editor.putString(context.getString(R.string.chats_sharedPreferencesPrefix) + messageItem.getId(), json);
+            String json = gson.toJson(chatRoom);
+            editor.putString(context.getString(R.string.chats_sharedPreferencesPrefix) + chatRoom.getId(), json);
             editor.apply();
         }
     }
 
-    public static List<MessageItem> getChats(Context context) {
+    public static ChatRoom getChatRoom(Context context, String chatRoomId) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                context.getString(R.string.chats_sharedPreferencesKey),
+                Context.MODE_PRIVATE);
+        String key = context.getString(R.string.chats_sharedPreferencesPrefix) + chatRoomId;
+        String json = sharedPrefs.getString(key, null);
+        if (json != null) {
+            return new Gson().fromJson(json, ChatRoom.class);
+        } else {
+            return null;
+        }
+    }
+
+    public static void updateChatRoom(ChatRoom chatRoom, Context context) {
+        saveMessage(chatRoom, context);
+    }
+
+    public static List<ChatRoom> getChatRooms(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
-        List<MessageItem> chatList = new ArrayList<>();
+        List<ChatRoom> chatRooms = new ArrayList<>();
         Map<String, ?> map = sharedPrefs.getAll();
 
         Set set = map.entrySet();
@@ -42,11 +60,11 @@ public class ChatResponseUtils {
             String json = (String) entry.getValue();
 
             if (json != null) {
-                MessageItem messageItem = gson.fromJson(json, MessageItem.class);
-                chatList.add(messageItem);
+                ChatRoom chatRoom = gson.fromJson(json, ChatRoom.class);
+                chatRooms.add(chatRoom);
             }
         }
 
-        return chatList;
+        return chatRooms;
     }
 }

@@ -53,6 +53,12 @@
             android:src="@drawable/ic_mic"
             android:contentDescription="@string/mic_button_description" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewChatHistoryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chat_history_button" />
+
         <!-- Buttons for Post-Response Options (Re-listen, Follow-Up, New Conversation)
              can be added here as needed. -->
 
