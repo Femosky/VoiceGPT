@@ -12,6 +12,7 @@ import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.activity.ChatRoomActivity;
 import com.example.group6finalgroupproject.activity.MainActivity;
 import com.example.group6finalgroupproject.helper.ChatRoomManager;
+import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatResponse;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.Choice;
@@ -169,10 +170,12 @@ public class ChatGPTAPI {
 
                         // Save chatroom to shared preferences
                         ChatResponseUtils.saveMessage(chatRoom, context);
+                        ChatSyncManager.getInstance(context).sendChatRooms();
 
-                        if (cameFromChatRoomScreen == true) { // REFRESH THE CHATROOM SCREEN
+
+                        if (cameFromChatRoomScreen) { // REFRESH THE CHATROOM SCREEN
                             if (context instanceof ChatRoomActivity) {
-                                // Ensure this runs on the UI thread
+                                // Runs on the UI thread
                                 ((ChatRoomActivity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

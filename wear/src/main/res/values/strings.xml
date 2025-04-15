@@ -30,4 +30,6 @@
     <string name="empty_string" />
     <string name="came_from_main_activity">came_from_main_activity</string>
     <string name="chat_room_id">chat_room_id</string>
+    <string name="failed_string">Failed!</string>
+    <string name="no_node_error">No node found</string>
 </resources>
