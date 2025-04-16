@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.databinding.ActivityMainBinding;
 import com.example.group6finalgroupproject.helper.ChatRoomManager;
+import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
 
@@ -63,15 +64,16 @@ public class MainActivity extends AppCompatActivity {
         binding.sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userPrompt = binding.promptText.getText().toString();
-
-                if (userPrompt.isEmpty()) {
-                    Toast.makeText(MainActivity.this, getString(R.string.empty_prompt_error_message), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                long timestamp = System.currentTimeMillis() / 1000;
-                ChatGPTAPI.postPrompt(MainActivity.this, chatRoom, userPrompt, timestamp, false);
+                ChatSyncManager.getInstance(MainActivity.this).sendChatRooms();
+//                String userPrompt = binding.promptText.getText().toString();
+//
+//                if (userPrompt.isEmpty()) {
+//                    Toast.makeText(MainActivity.this, getString(R.string.empty_prompt_error_message), Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                long timestamp = System.currentTimeMillis() / 1000;
+//                ChatGPTAPI.postPrompt(MainActivity.this, chatRoom, userPrompt, timestamp, false);
             }
         });
 

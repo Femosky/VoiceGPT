@@ -8,6 +8,8 @@ import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.MessageItem;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +24,7 @@ public class ChatResponseUtils {
             SharedPreferences.Editor editor = sharedPrefs.edit();
 
             // Parse to JSON for storage
-            Gson gson = new Gson();
-            String json = gson.toJson(chatRoom);
+            String json = HelperUtils.convertChatRoomToJSON(chatRoom);
             editor.putString(context.getString(R.string.chats_sharedPreferencesPrefix) + chatRoom.getId(), json);
             editor.apply();
         }
@@ -42,10 +43,6 @@ public class ChatResponseUtils {
         }
     }
 
-    public static void updateChatRoom(ChatRoom chatRoom, Context context) {
-        saveMessage(chatRoom, context);
-    }
-
     public static List<ChatRoom> getChatRooms(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
         List<ChatRoom> chatRooms = new ArrayList<>();
@@ -53,14 +50,13 @@ public class ChatResponseUtils {
 
         Set set = map.entrySet();
         Iterator iterator = set.iterator();
-        Gson gson = new Gson();
 
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry)iterator.next();
             String json = (String) entry.getValue();
 
             if (json != null) {
-                ChatRoom chatRoom = gson.fromJson(json, ChatRoom.class);
+                ChatRoom chatRoom = HelperUtils.convertJSONToChatRoom(json);
                 chatRooms.add(chatRoom);
             }
         }

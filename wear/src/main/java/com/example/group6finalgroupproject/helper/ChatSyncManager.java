@@ -12,15 +12,21 @@ import com.example.group6finalgroupproject.utils.HelperUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 
@@ -28,9 +34,9 @@ public class ChatSyncManager {
     private Context context;
     private static final String LISTENER_STATE_PATH = "/listenerState";
     private static final String TAG = "ChatSyncManager";
-    private static final String GRAPH_CAPABILITY_NAME = "graph_generation";
+    private static final String CAPABILITY_NAME = "chatroom_sync";
     private static final String CHATROOM_DATA_PATH = "/chatroom_data";
-    private JSONArray jsonArrayChatRooms;
+//    private JSONArray jsonArrayChatRooms;
 
     private ChatSyncManager(Context context) {
         this.context = context.getApplicationContext();
@@ -49,23 +55,14 @@ public class ChatSyncManager {
         // Retrieve the current chatrooms from SharedPreferences (or your chosen persistence)
         List<ChatRoom> chatRooms = ChatResponseUtils.getChatRooms(context);
 
-        if(chatRooms == null || chatRooms.isEmpty()){
-            Log.i(TAG, "No chat rooms to sync.");
-            return;
-        }
-
-        // Convert list of chatRooms to JSON using Gson
-        Gson gson = new Gson();
-        String chatRoomsJson = gson.toJson(chatRooms);
-
-        Log.d(TAG, "Syncing chat rooms JSON: " + chatRoomsJson);
+        String chatRoomsJsonArrayString = HelperUtils.convertChatRoomListToJSON(chatRooms);
 
         // Convert the JSON string into a byte array
-        byte[] dataToSend = chatRoomsJson.getBytes();
+        byte[] dataToSend = chatRoomsJsonArrayString.getBytes();
 
         // Determine the best node to send to
         CapabilityClient capabilityClient = Wearable.getCapabilityClient(context);
-        Task<CapabilityInfo> task = capabilityClient.getCapability(GRAPH_CAPABILITY_NAME, CapabilityClient.FILTER_REACHABLE);
+        Task<CapabilityInfo> task = capabilityClient.getCapability(CAPABILITY_NAME, CapabilityClient.FILTER_ALL);
         task.addOnSuccessListener(new OnSuccessListener<CapabilityInfo>() {
             @Override
             public void onSuccess(CapabilityInfo capabilityInfo) {
@@ -83,6 +80,9 @@ public class ChatSyncManager {
     private void sendToNodeForChatRooms(CapabilityInfo capabilityInfo, byte[] data) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
         String bestNodeId = pickBestNodeId(connectedNodes);
+
+        Log.d("CONNECTED NODES", connectedNodes.toString());
+        Log.d("BEST NODE ID", bestNodeId == null ? "null" : bestNodeId);
 
         if (bestNodeId == null) {
             HelperUtils.showToast(context.getString(R.string.no_node_error), context);
@@ -123,3 +123,32 @@ public class ChatSyncManager {
         });
     }
 }
+
+//private Asset createAssetFromChatRooms() {
+//    List<ChatRoom> chatRooms = ChatResponseUtils.getChatRooms(context);
+//    JSONArray jsonArrayChatRooms = new JSONArray();
+//    for (ChatRoom chatRoom : chatRooms) {
+//        String jsonChatRooms = ChatResponseUtils.convertChatRoomToJSON(chatRoom);
+//        jsonArrayChatRooms.put(jsonChatRooms);
+//    }
+//
+//    String chatRoomsJSONString = jsonArrayChatRooms.toString();
+//    final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+//    try {
+//        byteStream.write(chatRoomsJSONString.getBytes(StandardCharsets.UTF_8));
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//    }
+//
+//    return Asset.createFromBytes(byteStream.toByteArray());
+//}
+//
+//public void sendChatRooms() {
+//    Asset asset = createAssetFromChatRooms();
+//    PutDataRequest request = PutDataRequest.create(CHATROOM_DATA_PATH);
+//    request.putAsset(context.getString(R.string.chatrooms_key), asset);
+//    Task<DataItem> putTask = Wearable.getDataClient(context).putDataItem(request);
+//    Log.i("TASK SENT", putTask.toString());
+//}
+
+

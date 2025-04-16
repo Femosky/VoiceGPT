@@ -32,4 +32,5 @@
     <string name="chat_room_id">chat_room_id</string>
     <string name="failed_string">Failed!</string>
     <string name="no_node_error">No node found</string>
+    <string name="chatrooms_key">chatrooms</string>
 </resources>

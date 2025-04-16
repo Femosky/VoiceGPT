@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.databinding.ActivityMain2Binding;
+import com.example.group6finalgroupproject.helpers.ChatSyncManager2;
+import com.example.group6finalgroupproject.model.ChatRoom2;
 import com.example.group6finalgroupproject.utils.HelperUtils2;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -27,20 +29,23 @@ import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity2 extends AppCompatActivity implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
 
     ActivityMain2Binding binding;
+//    private ChatSyncManager2 chatSyncManager2;
     private static final int SPEECH_REQUEST_CODE = 101;
 
     private static final String LISTENER_STATE_PATH = "/listenerState";
     private static final String TAG = "ChatSyncManager";
-    private static final String GRAPH_CAPABILITY_NAME = "graph_generation";
+    private static final String GRAPH_CAPABILITY_NAME = "chatroom_sync";
     private static final String CHATROOM_DATA_PATH = "/chatroom_data";
 
     @Override
@@ -53,7 +58,22 @@ public class MainActivity2 extends AppCompatActivity implements MessageClient.On
         setContentView(view);
 
         init();
+//        chatSyncManager2 = ChatSyncManager2.getInstance(this);
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        // Register the listener when the activity comes to the foreground.
+//        Wearable.getDataClient(this).addListener(chatSyncManager2);
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        // Unregister the listener when the activity goes to the background.
+//        Wearable.getDataClient(this).removeListener(chatSyncManager2);
+//    }
 
     public void loadListeners() {
         // Listeners
@@ -125,23 +145,13 @@ public class MainActivity2 extends AppCompatActivity implements MessageClient.On
         if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
             HelperUtils2.showToast("Chatroom Data received", this);
             byte[] data = messageEvent.getData();
-            listChatRoomData(data);
-        }
-    }
 
-    private void listChatRoomData(byte[] jsonArrayChatRooms) {
-        String jsonString = new String(jsonArrayChatRooms);
-        try {
-            JSONArray jsonArray = new JSONArray(jsonString);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                JSONArray names = jsonObject.names();
-                String key = names.getString(0);
-                int value = jsonObject.getInt(key);
-                Log.i("MainActivity", "Time: " + key + ", ChatRoom: " + String.valueOf(value));
-            }
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error parsing JSON: " + e.getMessage());
+            // COME BACK HERE!!!!! CHECK IF NULL
+            List<ChatRoom2> chatRooms = HelperUtils2.convertJSONDataToChatroomList(data);
+
+            String testResult = chatRooms == null ? "null" : chatRooms.toString();
+            binding.testText.setText(testResult);
+            Log.i("MainActivity", "Received Chatroom list from watch: " + testResult);
         }
     }
 
