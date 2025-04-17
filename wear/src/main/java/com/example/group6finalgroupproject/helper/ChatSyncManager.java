@@ -195,14 +195,14 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         sendTask.addOnSuccessListener(new OnSuccessListener<Integer>() {
             @Override
             public void onSuccess(Integer integer) {
-                HelperUtils.showToast("Chat rooms sync successful", context);
+                // HelperUtils.showToast("Chat rooms sync successful", context);
                 Log.d(TAG, "Successfully sent chatrooms to node: " + nodeId);
             }
         });
         sendTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                HelperUtils.showToast("Chat rooms sync failed", context);
+                // HelperUtils.showToast("Chat rooms sync failed", context);
                 Log.e(TAG, "Failed to send chatrooms to node: " + nodeId, e);
             }
         });

@@ -146,9 +146,9 @@ public class MainActivity2 extends AppCompatActivity {
         });
     }
 
-    public void refreshChatRoom() {
+    public void refreshChatRoom(ChatRoom2 chatRoom) {
         // always show the singleton
-        chatRoom = ChatRoomManager2.getChatRoom();
+//        chatRoom = ChatRoomManager2.getChatRoom();
 
         adapter.setChatRoom(chatRoom);
         adapter.notifyDataSetChanged();

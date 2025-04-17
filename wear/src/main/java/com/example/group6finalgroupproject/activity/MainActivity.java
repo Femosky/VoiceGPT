@@ -50,13 +50,13 @@ public class MainActivity extends AppCompatActivity {
     // Load startup code for the screen
     private void init() {
         // Set up reset button listener
-//        binding.resetButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                binding.promptText.setText(R.string.empty_string);
-//                chatRoom.resetChatRoom();
-//            }
-//        });
+        binding.resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chatRoom.resetChatRoom();
+                HelperUtils.showToast("Chatroom has been reset", MainActivity.this);
+            }
+        });
 
         // Set up mic button listener
         binding.micButton.setOnClickListener(new View.OnClickListener() {

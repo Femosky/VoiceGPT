@@ -123,12 +123,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
             // COME BACK HERE!!!!! CHECK IF NULL
             List<ChatRoom2> chatRooms = HelperUtils2.convertJSONDataToChatroomList(data);
 
-            String testResult = chatRooms == null ? "null" : chatRooms.toString();
-//            binding.testText.setText(testResult);
-            Log.i("SYNC DATA", "Received Chatroom list from watch: " + testResult);
-
             if (chatRooms != null) {
-                Log.i("SYNC DATA", "Chatroom example title: " + chatRooms.get(0).getTitle());
                 for (ChatRoom2 chatRoom : chatRooms) {
                     ChatResponseUtils2.saveMessage(chatRoom, context);
                 }

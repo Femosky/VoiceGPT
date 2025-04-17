@@ -171,7 +171,8 @@ public class ChatGPTAPI2 {
 
                         // Refresh the chat room
                         // Runs on the UI thread
-                        context.runOnUiThread(() -> context.refreshChatRoom());
+                        ChatRoom2 finalChatRoom = chatRoom;
+                        context.runOnUiThread(() -> context.refreshChatRoom(finalChatRoom));
 
                         Log.i("CHAT RESPONSE", result);
                     } catch (IOException e) {

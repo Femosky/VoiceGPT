@@ -25,7 +25,7 @@
     <string name="chat_history">Chat History</string>
     <string name="chat_history_button">Chat History</string>
     <string name="max_tokens_string">max_tokens</string>
-    <string name="pre_prompt_for_length">"In a max of a ten word sentence, briefly answer: "</string>
+    <string name="pre_prompt_for_length">"In a max of a 20 word sentence, briefly answer: "</string>
     <string name="reset_button_description">Reset Button</string>
     <string name="empty_string" />
     <string name="came_from_main_activity">came_from_main_activity</string>
