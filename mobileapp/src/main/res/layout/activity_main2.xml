@@ -31,6 +31,13 @@
             android:text="@string/history_button_text"
             android:layout_marginStart="10dp"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/syncButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sync_button"
+            android:layout_marginStart="10dp" />
+
     </LinearLayout>
 
     <!-- RecyclerView for Chat History -->
@@ -83,6 +90,14 @@
             android:scrollbars="vertical"
             android:overScrollMode="always"
             android:gravity="top|start" />
+
+        <!-- Mic button -->
+        <ImageButton
+            android:id="@+id/micButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mic"
+            android:contentDescription="@string/mic_button_icon_description" />
 
         <!-- Send Button -->
         <ImageButton

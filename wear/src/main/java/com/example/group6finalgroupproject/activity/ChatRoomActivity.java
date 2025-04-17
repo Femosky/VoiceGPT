@@ -27,6 +27,7 @@ import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.MessageItem;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils;
+import com.example.group6finalgroupproject.utils.HelperUtils;
 import com.google.android.gms.wearable.Wearable;
 import com.google.gson.Gson;
 
@@ -126,6 +127,20 @@ public class ChatRoomActivity extends AppCompatActivity {
     }
 
     private void loadListeners() {
+        binding.reListenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<MessageItem> chatRoomList = chatRoom.getChatList();
+                if (!chatRoomList.isEmpty()) {
+                    MessageItem lastMessageItem = chatRoom.getChatList().get(chatRoomList.size() - 1);
+                    String textToBeSpoken = lastMessageItem.getMessage();
+                    speakText(textToBeSpoken);
+                } else {
+                    HelperUtils.showToast("No message to read aloud.", ChatRoomActivity.this);
+                }
+            }
+        });
+
         binding.newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,6 +199,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                 String userPrompt = results.get(0);
 
                 // Send the prompt to through the ChatGPT API for a response
+                HelperUtils.showToast(getString(R.string.loading_prompt_response), this);
                 long timestamp = System.currentTimeMillis() / 1000;
                 ChatGPTAPI.postPrompt(this, chatRoom, userPrompt, timestamp, true);
             }

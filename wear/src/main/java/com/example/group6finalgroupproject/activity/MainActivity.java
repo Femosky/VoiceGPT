@@ -20,6 +20,7 @@ import com.example.group6finalgroupproject.helper.ChatRoomManager;
 import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
+import com.example.group6finalgroupproject.utils.HelperUtils;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 String userPrompt = results.get(0);
 
                 // Send the prompt to through the ChatGPT API for a response
+                HelperUtils.showToast(getString(R.string.loading_prompt_response), this);
                 long timestamp = System.currentTimeMillis() / 1000;
                 ChatGPTAPI.postPrompt(this, chatRoom, userPrompt, timestamp, false);
             }

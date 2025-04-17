@@ -51,6 +51,7 @@ public class MainActivity2 extends AppCompatActivity {
     ChatRoom2 chatRoom = ChatRoomManager2.getChatRoom();
     Boolean isLoading = false;
     private String chatRoomId;
+    private static final int SPEECH_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +111,25 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
+        binding.syncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Manually sync chat data to watch
+                ChatSyncManager2.getInstance(MainActivity2.this).sendChatRooms();
+            }
+        });
+
+        binding.micButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startVoiceInputCapture();
+            }
+        });
+
         binding.sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ChatSyncManager2.getInstance(ChatRoomActivity2.this).sendChatRooms();
                 String userPrompt = binding.promptText.getText().toString();
-                Log.i("ISNDINCSIJDUJC", "SOIDN");
 
                 if (userPrompt.isEmpty()) {
                     HelperUtils2.showToast(getString(R.string.empty_prompt_error_message), MainActivity2.this);
@@ -153,6 +167,28 @@ public class MainActivity2 extends AppCompatActivity {
             binding.loadingTextView.setVisibility(View.VISIBLE);
         } else {
             binding.loadingTextView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void startVoiceInputCapture() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && !results.isEmpty()) {
+                String userPrompt = results.get(0);
+
+                // Send the prompt to through the ChatGPT API for a response
+                HelperUtils2.showToast(getString(R.string.loading_prompt_response), this);
+                long timestamp = System.currentTimeMillis() / 1000;
+                ChatGPTAPI2.postPrompt(this, chatRoom, userPrompt, timestamp);
+            }
         }
     }
 

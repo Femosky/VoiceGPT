@@ -49,4 +49,7 @@
     <string name="loading">Loading...</string>
     <string name="bearer_pre_header_string">"Bearer "</string>
     <string name="authorization_pre_header_string">Authorization</string>
+    <string name="sync_button">Sync</string>
+    <string name="loading_prompt_response">Just a second</string>
+    <string name="mic_button_icon_description">Mic Button Icon</string>
 </resources>

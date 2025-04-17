@@ -35,4 +35,6 @@
     <string name="chatrooms_key">chatrooms</string>
     <string name="welcome_text">What\'s on your mind?</string>
     <string name="new_chat_description">New chat</string>
+    <string name="re_listen_button_description">Re-listen button</string>
+    <string name="loading_prompt_response">Just a second</string>
 </resources>

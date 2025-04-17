@@ -11,9 +11,25 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/play_circle_filled/baseline_play_circle_filled_24.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_add" />
+                            <entry key="color" value="45eee0" />
+                            <entry key="outputName" value="ic_play" />
                           </map>
                         </option>
                       </PersistentState>
