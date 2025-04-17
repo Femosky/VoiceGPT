@@ -74,6 +74,7 @@ public class ChatGPTAPI {
             return null;
         }
     }
+
     public static void postPrompt(Context context, ChatRoom contextChatRoom, String userPrompt, long timestamp, Boolean cameFromChatRoomScreen) {
         if (userPrompt.isEmpty()) {
             // Don't send a prompt query if the user prompt is empty
@@ -87,8 +88,6 @@ public class ChatGPTAPI {
             // Break out of post function
             return;
         }
-
-        Log.i("JSON HOBJECT", payloadObject.toString());
 
         try {
             final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -169,8 +168,8 @@ public class ChatGPTAPI {
                         chatRoom.appendChatList(messageItem);
 
                         // Save chatroom to shared preferences
-                        ChatResponseUtils.saveMessage(chatRoom, context);
-                        ChatSyncManager.getInstance(context).sendChatRooms();
+                        ChatResponseUtils.saveMessage(chatRoom, context); // saves to watch shared prefs
+                        ChatSyncManager.getInstance(context).sendChatRooms(); // sends chat to phone
 
 
                         if (cameFromChatRoomScreen) { // REFRESH THE CHATROOM SCREEN

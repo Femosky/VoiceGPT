@@ -149,6 +149,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                 queuedText = text;
                 Log.i("ChatRoomActivity", "TTS not initialized, queuing text.");
             } else {
+                Log.i("THE TEXT IS", text);
                 textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utteranceId");
             }
         }

@@ -126,6 +126,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
             String testResult = chatRooms == null ? "null" : chatRooms.toString();
 //            binding.testText.setText(testResult);
             Log.i("SYNC DATA", "Received Chatroom list from watch: " + testResult);
+
             if (chatRooms != null) {
                 Log.i("SYNC DATA", "Chatroom example title: " + chatRooms.get(0).getTitle());
                 for (ChatRoom2 chatRoom : chatRooms) {
