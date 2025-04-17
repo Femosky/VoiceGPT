@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.adapter.ChatHistoryAdapter2;
+import com.example.group6finalgroupproject.adapter.ChatRoomAdapter2;
 import com.example.group6finalgroupproject.databinding.ActivityChatHistory2Binding;
 import com.example.group6finalgroupproject.helpers.ChatSyncManager2;
 import com.example.group6finalgroupproject.model.ChatRoom2;
@@ -29,6 +30,7 @@ public class ChatHistoryActivity2 extends AppCompatActivity {
     ActivityChatHistory2Binding binding;
     private List<ChatRoom2> chatRooms = new ArrayList<>();
     private ChatSyncManager2 chatSyncManager;
+    private ChatHistoryAdapter2 adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class ChatHistoryActivity2 extends AppCompatActivity {
         chatRooms = ChatResponseUtils2.getChatRooms(this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ChatHistoryAdapter2 adapter = new ChatHistoryAdapter2(chatRooms);
+        adapter = new ChatHistoryAdapter2(chatRooms);
         adapter.setOnItemClickListener(new ChatHistoryAdapter2.OnItemClickListener() {
             @Override
             public void onItemClick(ChatRoom2 chatRoom) {
@@ -63,6 +65,18 @@ public class ChatHistoryActivity2 extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    public void refreshHistoryList() {
+        chatRooms = ChatResponseUtils2.getChatRooms(ChatHistoryActivity2.this);
+
+        adapter.setChatRooms(chatRooms);
+        adapter.notifyDataSetChanged();
+
+        if (adapter.getItemCount() > 0) {
+            binding.recyclerView.smoothScrollToPosition(0);
+        }
+        Log.i("MainActivity2", "Chat room refreshed!");
     }
 
     @Override

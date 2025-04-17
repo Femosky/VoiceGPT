@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="10dp"
-    android:background="@color/user_background"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:boxedEdges="all">
+    android:orientation="horizontal"
+    android:gravity="center">
 
-    <TextView
-        android:id="@+id/messageItem"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/messageContainer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/empty_string"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="6dp">
 
+        <TextView
+            android:id="@+id/messageItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_string"
+            android:textSize="11sp"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
 </LinearLayout>

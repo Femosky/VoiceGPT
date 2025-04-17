@@ -34,6 +34,10 @@ public class ChatHistoryAdapter2 extends RecyclerView.Adapter<ChatHistoryAdapter
         this.chatRooms = rooms;
     }
 
+    public void setChatRooms(List<ChatRoom2> newChatRooms) {
+        this.chatRooms = newChatRooms;
+    }
+
     @NonNull
     @Override
     public ChatHistoryViewHolder2 onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

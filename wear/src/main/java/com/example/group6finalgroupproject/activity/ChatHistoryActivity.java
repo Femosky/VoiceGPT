@@ -29,6 +29,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
     ActivityChatHistoryBinding binding;
     private List<ChatRoom> chatRooms = new ArrayList<>();
     private ChatSyncManager chatSyncManager;
+    private ChatHistoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
         chatRooms = ChatResponseUtils.getChatRooms(this);
 
         recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
-        ChatHistoryAdapter adapter = new ChatHistoryAdapter(chatRooms);
+        adapter = new ChatHistoryAdapter(chatRooms);
         adapter.setOnItemClickListener(new ChatHistoryAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(ChatRoom chatRoom) {
@@ -63,6 +64,14 @@ public class ChatHistoryActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    public void refreshHistoryList() {
+        chatRooms = ChatResponseUtils.getChatRooms(ChatHistoryActivity.this);
+
+        adapter.setChatRooms(chatRooms);
+        adapter.notifyDataSetChanged();
+        Log.i("MainActivity2", "Chat room refreshed!");
     }
 
     @Override

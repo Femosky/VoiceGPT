@@ -170,18 +170,18 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     }
 
-    // The refresh method to re-load the chatroom data
     public void refreshChatRoom() {
+        // always show the singleton
         chatRoom = ChatResponseUtils.getChatRoom(this, chatRoomId);
-        // Update the adapter's data if necessary.
-        if (adapter != null) {
-            adapter.setChatRoom(chatRoom);
-            adapter.notifyDataSetChanged();
 
-            // Scroll to the bottom - last item
-            binding.recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+        adapter.setChatRoom(chatRoom);
+        adapter.notifyDataSetChanged();
+
+        int last = adapter.getItemCount() - 1;
+        if (last >= 0) {
+            binding.recyclerView.smoothScrollToPosition(last);
         }
-        Log.i("ChatRoomActivity", "Chat room refreshed!");
+        Log.i("MainActivity2", "Chat room refreshed!");
     }
 
     public void startVoiceInputCapture() {

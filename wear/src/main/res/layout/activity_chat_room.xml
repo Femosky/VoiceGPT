@@ -1,57 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ChatRoomActivity">
+    android:clipToPadding="true"
+    android:clipChildren="true"
+    tools:context=".activity.ChatRoomActivity"
+    app:layout_boxedEdges="right|left">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <!-- Make the RecyclerView take up the available space -->
+        <!-- Message list -->
         <androidx.wear.widget.WearableRecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/white"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:padding="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonRow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
             tools:ignore="MissingClass" />
 
-        <!-- The horizontal LinearLayout with buttons centered -->
+        <!-- Bottom circle buttons -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/buttonRow"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
 
             <ImageButton
                 android:id="@+id/reListenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_circle"
+                android:contentDescription="@string/re_listen_button_description"
+                android:padding="12dp"
                 android:src="@drawable/ic_play"
-                android:contentDescription="@string/re_listen_button_description" />
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/newChatButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_circle"
+                android:contentDescription="@string/new_chat_description"
+                android:padding="12dp"
                 android:src="@drawable/ic_add"
-                android:contentDescription="@string/new_chat_description" />
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/micButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle"
+                android:contentDescription="@string/mic_button_description"
+                android:padding="12dp"
                 android:src="@drawable/ic_mic"
-                android:contentDescription="@string/mic_button_description" />
-
+                app:tint="@color/white" />
         </LinearLayout>
 
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>

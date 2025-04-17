@@ -37,4 +37,9 @@
     <string name="new_chat_description">New chat</string>
     <string name="re_listen_button_description">Re-listen button</string>
     <string name="loading_prompt_response">Just a second</string>
+    <string name="chatroom_data_received">Chatroom Data received</string>
+    <string name="chat_rooms_sync_successful">Chat rooms sync successful</string>
+    <string name="chat_rooms_sync_failed">Chat rooms sync failed</string>
+    <string name="failed_to_send_chatrooms_to_node">"Failed to send chatrooms to node: "</string>
+    <string name="successfully_sent_chatrooms_to_node">"Successfully sent chatrooms to node: "</string>
 </resources>

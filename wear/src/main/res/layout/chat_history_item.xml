@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="10dp"
-    android:background="@color/blue_primary"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:boxedEdges="all">
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/bg_chat_item"
+    app:layout_boxedEdges="left|right">
 
     <TextView
         android:id="@+id/chatTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:text=""
+        android:textColor="@color/white"
         android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
         android:ellipsize="end"
-        android:maxLines="1" />
-
+        android:maxLines="1"/>
 </LinearLayout>

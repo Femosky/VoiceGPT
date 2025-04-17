@@ -62,12 +62,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
             Context context = binding.getRoot().getContext();
             String message = messageItem.getMessage();
             binding.messageItem.setText(message);
+
             if (messageItem.getFrom().equals(context.getString(R.string.user_string))) {
-                int userBgColor = androidx.core.content.ContextCompat.getColor(context, R.color.user_background);
-                binding.linearLayout.setBackgroundColor(userBgColor);
+                binding.messageContainer.setBackgroundResource(R.drawable.bg_user_message_pill);
             } else {
-                int userBgColor = androidx.core.content.ContextCompat.getColor(context, R.color.assistant_background);
-                binding.linearLayout.setBackgroundColor(userBgColor);
+                binding.messageContainer.setBackgroundResource(R.drawable.bg_assistant_message_pill);
             }
         }
     }

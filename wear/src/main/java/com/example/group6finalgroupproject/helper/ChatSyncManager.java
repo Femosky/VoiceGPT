@@ -6,7 +6,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.activity.ChatHistoryActivity;
+import com.example.group6finalgroupproject.activity.ChatRoomActivity;
 import com.example.group6finalgroupproject.model.ChatRoom;
+import com.example.group6finalgroupproject.model.MessageItem;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils;
 import com.example.group6finalgroupproject.utils.HelperUtils;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,6 +35,7 @@ import org.json.JSONArray;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +48,7 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
 //    private JSONArray jsonArrayChatRooms;
 
     private ChatSyncManager(Context context) {
-        this.context = context.getApplicationContext();
+        this.context = context;
     }
 
     // Make it a singleton for global use
@@ -52,9 +56,11 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
     public static synchronized ChatSyncManager getInstance(Context context) {
         if (instance == null) {
             instance = new ChatSyncManager(context);
+        } else {
+            // update to whichever Activity is calling
+            instance.context = context;
         }
 
-        // LOAD RECEIVER INIT FUNCTION
         instance.init();
         return instance;
     }
@@ -114,21 +120,51 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
     @Override
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
         if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
-            HelperUtils.showToast("Chatroom Data received", context);
+            HelperUtils.showToast(context.getString(R.string.chatroom_data_received), context);
             byte[] data = messageEvent.getData();
 
-            // COME BACK HERE!!!!! CHECK IF NULL
+            // CONVERT RECEIVED DATA FROM WATCH TO A CHATROOM LIST
             List<ChatRoom> chatRooms = HelperUtils.convertJSONDataToChatroomList(data);
 
-            String testResult = chatRooms == null ? "null" : chatRooms.toString();
-//            binding.testText.setText(testResult);
-            Log.i("SYNC DATA", "Received Chatroom list from phone: " + testResult);
-            if (chatRooms != null) {
-                Log.i("SYNC DATA", "Chatroom example title: " + chatRooms.get(0).getTitle());
+            if (chatRooms == null) {
+                return;
+            }
 
-                for (ChatRoom chatRoom : chatRooms) {
-                    ChatResponseUtils.saveMessage(chatRoom, context);
+            for (ChatRoom incoming : chatRooms) {
+                String id = incoming.getId();
+                ChatRoom stored = ChatResponseUtils.getChatRoom(context, id);
+
+                List<MessageItem> incList = incoming.getChatList();
+                List<MessageItem> oldList = new ArrayList<>();
+
+                // skip if incoming has no messages
+                if (stored == null) {
+                    ChatResponseUtils.saveMessage(incoming, context);
+                    continue;
+                } else {
+                    oldList = stored.getChatList();
                 }
+
+                long incTs = incList.get(incList.size() - 1).getCreated();
+                long oldTs = oldList.isEmpty()
+                        ? 0L
+                        : oldList.get(oldList.size() - 1).getCreated();
+
+                if (incTs > oldTs) {
+                    ChatResponseUtils.saveMessage(incoming, context);
+                }
+            }
+
+            // Refresh the UI to reflect changes
+            if (context instanceof ChatRoomActivity) {
+                ChatRoomActivity activity = (ChatRoomActivity)context;
+                activity.runOnUiThread(() -> {
+                    activity.refreshChatRoom();
+                });
+            }
+            else if (context instanceof ChatHistoryActivity) {
+                ChatHistoryActivity activity = (ChatHistoryActivity)context;
+                activity.runOnUiThread(activity::refreshHistoryList);
             }
         }
     }
@@ -195,15 +231,15 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         sendTask.addOnSuccessListener(new OnSuccessListener<Integer>() {
             @Override
             public void onSuccess(Integer integer) {
-                // HelperUtils.showToast("Chat rooms sync successful", context);
-                Log.d(TAG, "Successfully sent chatrooms to node: " + nodeId);
+                 HelperUtils.showToast(context.getString(R.string.chat_rooms_sync_successful), context);
+                Log.d(TAG, context.getString(R.string.successfully_sent_chatrooms_to_node) + nodeId);
             }
         });
         sendTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // HelperUtils.showToast("Chat rooms sync failed", context);
-                Log.e(TAG, "Failed to send chatrooms to node: " + nodeId, e);
+                 HelperUtils.showToast(context.getString(R.string.chat_rooms_sync_failed), context);
+                Log.e(TAG, context.getString(R.string.failed_to_send_chatrooms_to_node) + nodeId, e);
             }
         });
     }

@@ -62,13 +62,12 @@ public class ChatRoomAdapter2 extends RecyclerView.Adapter<ChatRoomAdapter2.Chat
 
             LinearLayout container = binding.container; // from the generated binding
 
-            // CHAT POSITION BASED ON USER
             if (messageItem.getFrom().equals(context.getString(R.string.user_string))) {
                 container.setGravity(Gravity.END);
-                binding.chatBubble.setBackgroundResource(R.color.user_background);
+                binding.chatBubble.setBackgroundResource(R.drawable.bg_user_message_pill);
             } else {
                 container.setGravity(Gravity.START);
-                binding.chatBubble.setBackgroundResource(R.color.assistant_background);
+                binding.chatBubble.setBackgroundResource(R.drawable.bg_assistant_message_pill);
             }
         }
 

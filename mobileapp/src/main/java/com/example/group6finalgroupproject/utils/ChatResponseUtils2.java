@@ -70,7 +70,7 @@ public class ChatResponseUtils2 {
         return chatRooms;
     }
 
-    private static long getLastTimestamp(ChatRoom2 room) {
+    public static long getLastTimestamp(ChatRoom2 room) {
         List<MessageItem2> list = room.getChatList();
         if (list != null && !list.isEmpty()) {
             // last message in chronological order

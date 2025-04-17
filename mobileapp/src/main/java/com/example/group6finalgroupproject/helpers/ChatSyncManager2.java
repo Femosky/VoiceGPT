@@ -1,5 +1,6 @@
 package com.example.group6finalgroupproject.helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -7,8 +8,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.activity.ChatHistoryActivity2;
 import com.example.group6finalgroupproject.activity.MainActivity2;
 import com.example.group6finalgroupproject.model.ChatRoom2;
+import com.example.group6finalgroupproject.model.MessageItem2;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils2;
 import com.example.group6finalgroupproject.utils.HelperUtils2;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,7 +50,8 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
     private static final String TAG = "ChatSyncManager";
 
     private ChatSyncManager2(Context context) {
-        this.context = context.getApplicationContext();
+//        this.context = context.getApplicationContext();
+        this.context = context;
     }
 
     // Make it a singleton for global use
@@ -55,10 +59,10 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
     public static synchronized ChatSyncManager2 getInstance(Context context) {
         if (instance == null) {
             instance = new ChatSyncManager2(context);
+        } else {
+            // update to whichever Activity is calling
+            instance.context = context;
         }
-        Log.i("INSTANCE MADE", "YEAH");
-
-        // LOAD RECEIVER INIT FUNCTION
         instance.init();
         return instance;
     }
@@ -120,13 +124,48 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
             HelperUtils2.showToast("Chatroom Data received", context);
             byte[] data = messageEvent.getData();
 
-            // COME BACK HERE!!!!! CHECK IF NULL
+            // CONVERT RECEIVED DATA FROM WATCH TO A CHATROOM LIST
             List<ChatRoom2> chatRooms = HelperUtils2.convertJSONDataToChatroomList(data);
 
-            if (chatRooms != null) {
-                for (ChatRoom2 chatRoom : chatRooms) {
-                    ChatResponseUtils2.saveMessage(chatRoom, context);
+            if (chatRooms == null) {
+                return;
+            }
+
+            for (ChatRoom2 incoming : chatRooms) {
+                String id = incoming.getId();
+                ChatRoom2 stored = ChatResponseUtils2.getChatRoom(context, id);
+
+                List<MessageItem2> incList = incoming.getChatList();
+                List<MessageItem2> oldList = new ArrayList<>();
+
+                // skip if incoming has no messages
+                if (stored == null) {
+                    ChatResponseUtils2.saveMessage(incoming, context);
+                    continue;
+                } else {
+                    oldList = stored.getChatList();
                 }
+
+                long incTs = incList.get(incList.size() - 1).getCreated();
+                long oldTs = oldList.isEmpty()
+                        ? 0L
+                        : oldList.get(oldList.size() - 1).getCreated();
+
+                if (incTs > oldTs) {
+                    ChatResponseUtils2.saveMessage(incoming, context);
+                }
+            }
+
+            // Refresh the UI to reflect changes
+            if (context instanceof MainActivity2) {
+                MainActivity2 activity = (MainActivity2)context;
+                activity.runOnUiThread(() -> {
+                    activity.refreshChatRoom();
+                });
+            }
+            else if (context instanceof ChatHistoryActivity2) {
+                ChatHistoryActivity2 activity = (ChatHistoryActivity2)context;
+                activity.runOnUiThread(activity::refreshHistoryList);
             }
         }
     }

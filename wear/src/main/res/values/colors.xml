@@ -2,7 +2,9 @@
 <resources>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="grey">#838485</color>
     <color name="blue_primary">#ABDAFC</color>
-    <color name="assistant_background">#83C5BE</color>
-    <color name="user_background">#ADC178</color>
+    <color name="assistant_background">#5982E0</color>
+    <color name="user_background">#68b868</color>
+    <color name="button_circle_bg">#5184ff</color>
 </resources>
