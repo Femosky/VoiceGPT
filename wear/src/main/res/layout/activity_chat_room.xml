@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add"
-                android:contentDescription="@string/mic_button_description" />
+                android:contentDescription="@string/new_chat_description" />
 
             <ImageButton
                 android:id="@+id/micButton"

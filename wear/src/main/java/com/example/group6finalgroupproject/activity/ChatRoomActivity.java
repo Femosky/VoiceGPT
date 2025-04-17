@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
@@ -94,10 +96,20 @@ public class ChatRoomActivity extends AppCompatActivity {
         chatRoomId = getIntent().getStringExtra(getString(R.string.chat_room_id));
         chatRoom = ChatResponseUtils.getChatRoom(this, chatRoomId);
 
-        recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
+        WearableLinearLayoutManager manager = new WearableLinearLayoutManager(this);
+        manager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(manager);
         adapter = new ChatRoomAdapter(chatRoom);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        // Immediately scroll to the bottom (latest messages)
+        recyclerView.post(() -> {
+            int last = adapter.getItemCount() - 1;
+            if (last >= 0) {
+                recyclerView.scrollToPosition(last);
+            }
+        });
 
         // LISTENERS
         loadListeners();

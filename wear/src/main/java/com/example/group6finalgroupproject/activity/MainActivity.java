@@ -49,14 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
     // Load startup code for the screen
     private void init() {
-        // Set up mic button listener
-        binding.resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                binding.promptText.setText(R.string.empty_string);
-                chatRoom.resetChatRoom();
-            }
-        });
+        // Set up reset button listener
+//        binding.resetButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                binding.promptText.setText(R.string.empty_string);
+//                chatRoom.resetChatRoom();
+//            }
+//        });
 
         // Set up mic button listener
         binding.micButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
                 String userPrompt = results.get(0);
-                binding.promptText.setText(userPrompt);
 
                 // Send the prompt to through the ChatGPT API for a response
                 long timestamp = System.currentTimeMillis() / 1000;

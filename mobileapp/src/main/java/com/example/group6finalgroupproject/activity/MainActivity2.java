@@ -83,23 +83,6 @@ public class MainActivity2 extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                int last = adapter.getItemCount() - 1;
-                binding.recyclerView.smoothScrollToPosition(last);
-            }
-        });
-
-        // Scroll to last message
-        binding.recyclerView.post(() -> {
-            int last = adapter.getItemCount() - 1;
-            if (last >= 0) {
-                binding.recyclerView.smoothScrollToPosition(last);
-            }
-        });
-
-
         // Load listerners
         loadListeners();
     }

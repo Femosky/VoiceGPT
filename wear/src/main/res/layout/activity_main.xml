@@ -18,32 +18,23 @@
             android:layout_height="wrap_content"
             android:text="@string/response_textview"
             android:textSize="14sp"
-            android:paddingTop="16dp"
             android:visibility="invisible"/>
 
-        <LinearLayout
+        <!-- Welcome text -->
+        <TextView
+            android:id="@+id/welcomeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:hint="@string/welcome_text"
+            android:textSize="14sp"
+            android:paddingTop="16dp" />
 
-            <!-- EditView to display the Prompt before a response is gotten from ChatGPT -->
-            <EditText
-                android:id="@+id/promptText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_textview"
-                android:textSize="14sp"
-                android:paddingTop="16dp" />
-
-            <ImageButton
-                android:id="@+id/sendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_send_arrow"
-                android:contentDescription="@string/send_button_icon_description" />
-
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/micButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mic"
+            android:contentDescription="@string/mic_button_description" />
 
         <!-- Microphone Button for Voice Input -->
         <LinearLayout
@@ -58,23 +49,13 @@
                 android:src="@drawable/ic_reset"
                 android:contentDescription="@string/reset_button_description" />
 
-            <ImageButton
-                android:id="@+id/micButton"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewChatHistoryBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_mic"
-                android:contentDescription="@string/mic_button_description" />
+                android:text="@string/chat_history_button" />
 
         </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/viewChatHistoryBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/chat_history_button" />
-
-        <!-- Buttons for Post-Response Options (Re-listen, Follow-Up, New Conversation)
-             can be added here as needed. -->
 
     </LinearLayout>
 

@@ -33,4 +33,6 @@
     <string name="failed_string">Failed!</string>
     <string name="no_node_error">No node found</string>
     <string name="chatrooms_key">chatrooms</string>
+    <string name="welcome_text">What\'s on your mind?</string>
+    <string name="new_chat_description">New chat</string>
 </resources>
