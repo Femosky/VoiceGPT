@@ -20,10 +20,12 @@ import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.adapter.ChatHistoryAdapter;
 import com.example.group6finalgroupproject.adapter.ChatRoomAdapter;
 import com.example.group6finalgroupproject.databinding.ActivityChatRoomBinding;
+import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.MessageItem;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils;
+import com.google.android.gms.wearable.Wearable;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     private boolean ttsInitialized = false;
     private String queuedText = null;
 
+    private ChatSyncManager chatSyncManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,15 @@ public class ChatRoomActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        // Load TextToSpeech First to ensure it reads our responses back.
+        initializedTextToSpeech();
+
+        init();
+
+        chatSyncManager = ChatSyncManager.getInstance(this);
+    }
+
+    private void initializedTextToSpeech() {
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -70,7 +83,6 @@ public class ChatRoomActivity extends AppCompatActivity {
                 }
             }
         });
-        init();
     }
 
     // Load start up code
@@ -88,7 +100,20 @@ public class ChatRoomActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         // LISTENERS
+        loadListeners();
 
+        // If cameFromMainActivity, run the voice to text
+        boolean cameFromMainActivity = getIntent().getBooleanExtra(getString(R.string.came_from_main_activity), false);
+        Log.i("CAMEFROMMAINACTIVITY", String.valueOf(cameFromMainActivity));
+
+        if (cameFromMainActivity && !chatRoom.getChatList().isEmpty()) {
+            String response = chatRoom.getChatList().get(chatRoom.getChatList().size() - 1).getMessage();
+            Log.i("RESPONSE IS: ", response);
+            speakText(response);
+        }
+    }
+
+    private void loadListeners() {
         binding.newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,16 +128,6 @@ public class ChatRoomActivity extends AppCompatActivity {
                 startVoiceInputCapture();
             }
         });
-
-        // If cameFromMainActivity, run the voice to text
-        boolean cameFromMainActivity = getIntent().getBooleanExtra(getString(R.string.came_from_main_activity), false);
-        Log.i("CAMEFROMMAINACTIVITY", String.valueOf(cameFromMainActivity));
-
-        if (cameFromMainActivity && !chatRoom.getChatList().isEmpty()) {
-            String response = chatRoom.getChatList().get(chatRoom.getChatList().size() - 1).getMessage();
-            Log.i("RESPONSE IS: ", response);
-            speakText(response);
-        }
     }
 
     public void speakText(String text) {
@@ -160,5 +175,28 @@ public class ChatRoomActivity extends AppCompatActivity {
                 ChatGPTAPI.postPrompt(this, chatRoom, userPrompt, timestamp, true);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Register the listener when the activity comes to the foreground.
+        Wearable.getDataClient(this).addListener(chatSyncManager);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener when the activity goes to the background.
+        Wearable.getDataClient(this).removeListener(chatSyncManager);
     }
 }

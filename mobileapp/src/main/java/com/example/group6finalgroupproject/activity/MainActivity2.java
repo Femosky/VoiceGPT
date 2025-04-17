@@ -13,11 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.adapter.ChatRoomAdapter2;
 import com.example.group6finalgroupproject.databinding.ActivityMain2Binding;
+import com.example.group6finalgroupproject.helpers.ChatRoomManager2;
 import com.example.group6finalgroupproject.helpers.ChatSyncManager2;
 import com.example.group6finalgroupproject.model.ChatRoom2;
+import com.example.group6finalgroupproject.service.ChatGPTAPI2;
+import com.example.group6finalgroupproject.utils.ChatResponseUtils2;
 import com.example.group6finalgroupproject.utils.HelperUtils2;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -37,141 +43,147 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity2 extends AppCompatActivity implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
+public class MainActivity2 extends AppCompatActivity {
 
     ActivityMain2Binding binding;
-//    private ChatSyncManager2 chatSyncManager2;
-    private static final int SPEECH_REQUEST_CODE = 101;
-
-    private static final String LISTENER_STATE_PATH = "/listenerState";
-    private static final String TAG = "ChatSyncManager";
-    private static final String GRAPH_CAPABILITY_NAME = "chatroom_sync";
-    private static final String CHATROOM_DATA_PATH = "/chatroom_data";
+    private ChatSyncManager2 chatSyncManager;
+    private ChatRoomAdapter2 adapter;
+    ChatRoom2 chatRoom = ChatRoomManager2.getChatRoom();
+    Boolean isLoading = false;
+    private String chatRoomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main2);
 
         binding = ActivityMain2Binding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
         init();
-//        chatSyncManager2 = ChatSyncManager2.getInstance(this);
-    }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        // Register the listener when the activity comes to the foreground.
-//        Wearable.getDataClient(this).addListener(chatSyncManager2);
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        // Unregister the listener when the activity goes to the background.
-//        Wearable.getDataClient(this).removeListener(chatSyncManager2);
-//    }
-
-    public void loadListeners() {
-        // Listeners
-        binding.voiceInputButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startVoiceInputCapture();
-            }
-        });
-
-        binding.syncButton.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity2.this, getString(R.string.syncing_data), Toast.LENGTH_SHORT).show();
-            }
-        }));
+        chatSyncManager = ChatSyncManager2.getInstance(this);
     }
 
     // To run start up code
     private void init() {
-        Wearable.getMessageClient(this).addListener(this);
-        readCurrentListenerState();
-        Wearable.getDataClient(this).addListener(this);
+        RecyclerView recyclerView = binding.recyclerView;
+        recyclerView.setHasFixedSize(true);
 
+        chatRoomId = getIntent().getStringExtra(getString(R.string.chat_room_id));
+
+        if (chatRoomId != null) {
+            chatRoom = ChatResponseUtils2.getChatRoom(this, chatRoomId);
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        adapter = new ChatRoomAdapter2(chatRoom);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int last = adapter.getItemCount() - 1;
+                binding.recyclerView.smoothScrollToPosition(last);
+            }
+        });
+
+        // Scroll to last message
+        binding.recyclerView.post(() -> {
+            int last = adapter.getItemCount() - 1;
+            if (last >= 0) {
+                binding.recyclerView.smoothScrollToPosition(last);
+            }
+        });
+
+
+        // Load listerners
         loadListeners();
     }
 
-    private void readCurrentListenerState() {
-        Task<DataItemBuffer> task = Wearable.getDataClient(this).getDataItems();
-        task.addOnSuccessListener(new OnSuccessListener<DataItemBuffer>() {
+    public void loadListeners() {
+        binding.newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(DataItemBuffer dataItems) {
-                for (DataItem item : dataItems) {
-                    if (item.getUri().getPath().equals(MainActivity2.LISTENER_STATE_PATH)) {
-                        displayListenerState(item);
-                        return;
-                    }
+            public void onClick(View view) {
+                if (!chatRoom.getChatList().isEmpty() || chatRoomId != null) {
+                    ChatRoom2 newRoom = new ChatRoom2();
+                    ChatRoomManager2.setChatRoom(newRoom);
+
+                    Intent fresh = new Intent(MainActivity2.this, MainActivity2.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(fresh);
                 }
-                MainActivity2.this.binding.testText.setText("No data");
+            }
+        });
+
+        binding.historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chatRoom.resetChatRoom();
+                startActivity(new Intent(MainActivity2.this, ChatHistoryActivity2.class));
+            }
+        });
+
+        binding.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                ChatSyncManager2.getInstance(ChatRoomActivity2.this).sendChatRooms();
+                String userPrompt = binding.promptText.getText().toString();
+                Log.i("ISNDINCSIJDUJC", "SOIDN");
+
+                if (userPrompt.isEmpty()) {
+                    HelperUtils2.showToast(getString(R.string.empty_prompt_error_message), MainActivity2.this);
+                    return;
+                }
+
+                // Clear and send the prompt
+                binding.promptText.setText(getString(R.string.empty_string));
+                setIsLoading(true);
+
+                long timestamp = System.currentTimeMillis() / 1000;
+                ChatGPTAPI2.postPrompt(MainActivity2.this, chatRoom, userPrompt, timestamp);
             }
         });
     }
 
-    private void displayListenerState(DataItem item) {
-        byte data = item.getData()[0];
-        if (data == 0) {
-            this.binding.testText.setText("recording");
+    public void refreshChatRoom() {
+        // always show the singleton
+        chatRoom = ChatRoomManager2.getChatRoom();
+
+        adapter.setChatRoom(chatRoom);
+        adapter.notifyDataSetChanged();
+
+        int last = adapter.getItemCount() - 1;
+        if (last >= 0) {
+            binding.recyclerView.smoothScrollToPosition(last);
+        }
+        Log.i("MainActivity2", "Chat room refreshed!");
+    }
+
+    public void setIsLoading(Boolean status) {
+        isLoading = status;
+
+        if (status) {
+            binding.loadingTextView.setVisibility(View.VISIBLE);
         } else {
-            this.binding.testText.setText("not recording");
+            binding.loadingTextView.setVisibility(View.INVISIBLE);
         }
     }
 
     @Override
-    public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
-        for (DataEvent event : dataEventBuffer) {
-            if (event.getType() == DataEvent.TYPE_DELETED) {
-                this.binding.testText.setText(getString(R.string.test_string_2));
-            } else if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem item = event.getDataItem();
-                if (item.getUri().getPath().equals(MainActivity2.LISTENER_STATE_PATH)) {
-                    displayListenerState(item);
-                }
-            }
-        }
+    protected void onResume() {
+        super.onResume();
+        // Register the listener when the activity comes to the foreground.
+        Wearable.getDataClient(this).addListener(chatSyncManager);
     }
 
     @Override
-    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
-        if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
-            HelperUtils2.showToast("Chatroom Data received", this);
-            byte[] data = messageEvent.getData();
-
-            // COME BACK HERE!!!!! CHECK IF NULL
-            List<ChatRoom2> chatRooms = HelperUtils2.convertJSONDataToChatroomList(data);
-
-            String testResult = chatRooms == null ? "null" : chatRooms.toString();
-            binding.testText.setText(testResult);
-            Log.i("MainActivity", "Received Chatroom list from watch: " + testResult);
-        }
-    }
-
-    public void startVoiceInputCapture() {
-        Intent voiceIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        voiceIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        startActivityForResult(voiceIntent, SPEECH_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (results != null && !results.isEmpty()) {
-                String spokenText = results.get(0);
-                binding.chatInput.setText(spokenText);
-            }
-        }
-
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener when the activity goes to the background.
+        Wearable.getDataClient(this).removeListener(chatSyncManager);
     }
 }

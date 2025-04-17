@@ -1,6 +1,7 @@
 package com.example.group6finalgroupproject.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.group6finalgroupproject.R;
@@ -8,9 +9,42 @@ import com.example.group6finalgroupproject.activity.MainActivity;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HelperUtils {
+
+    public static String formatShortDate(long timestampSeconds) {
+        long millis = timestampSeconds * 1000L;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        return simpleDateFormat.format(new Date(millis));
+    }
+
+    public static List<ChatRoom> convertJSONDataToChatroomList(byte[] jsonArrayChatRooms) {
+        String jsonString = new String(jsonArrayChatRooms);
+
+        try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+            List<ChatRoom> chatRooms = new ArrayList<>();
+            Gson gson = new Gson();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String chatRoomJson = jsonArray.getString(i);
+                ChatRoom chatRoom = gson.fromJson(chatRoomJson, ChatRoom.class);
+                chatRooms.add(chatRoom);
+            }
+
+            return chatRooms;
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error parsing JSON: " + e.getMessage());
+            return null;
+        }
+    }
 
     public static String convertChatRoomToJSON(ChatRoom chatRoom) {
         Gson gson = new Gson();

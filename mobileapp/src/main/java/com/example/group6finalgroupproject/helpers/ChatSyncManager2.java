@@ -4,14 +4,29 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.activity.MainActivity2;
 import com.example.group6finalgroupproject.model.ChatRoom2;
+import com.example.group6finalgroupproject.utils.ChatResponseUtils2;
+import com.example.group6finalgroupproject.utils.HelperUtils2;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.CapabilityClient;
+import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageClient;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,13 +37,14 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class ChatSyncManager2 implements DataClient.OnDataChangedListener {
+public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private Context context;
     private static final String LISTENER_STATE_PATH = "/listenerState";
-    private static final String TAG = "ChatSyncManager";
-    private static final String GRAPH_CAPABILITY_NAME = "graph_generation";
     private static final String CHATROOM_DATA_PATH = "/chatroom_data";
+    private static final String CAPABILITY_NAME = "chatroom_sync";
+    private static final String TAG = "ChatSyncManager";
 
     private ChatSyncManager2(Context context) {
         this.context = context.getApplicationContext();
@@ -41,59 +57,155 @@ public class ChatSyncManager2 implements DataClient.OnDataChangedListener {
             instance = new ChatSyncManager2(context);
         }
         Log.i("INSTANCE MADE", "YEAH");
+
+        // LOAD RECEIVER INIT FUNCTION
+        instance.init();
         return instance;
     }
 
+    /**
+
+     RECEIVE DATA FROM WATCH
+
+     **/
+    private void init() {
+        Wearable.getMessageClient(context).addListener(this);
+        readCurrentListenerState();
+        Wearable.getDataClient(context).addListener(this);
+    }
+
+    private void readCurrentListenerState() {
+        Task<DataItemBuffer> task = Wearable.getDataClient(context).getDataItems();
+        task.addOnSuccessListener(new OnSuccessListener<DataItemBuffer>() {
+            @Override
+            public void onSuccess(DataItemBuffer dataItems) {
+                for (DataItem item : dataItems) {
+                    if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
+                        displayListenerState(item);
+                        return;
+                    }
+                }
+//                MainActivity2.this.binding.testText.setText("No data");
+            }
+        });
+    }
+
+    // USE IT AS LOADER STATE FOR SYNCING
+    private void displayListenerState(DataItem item) {
+        byte data = item.getData()[0];
+        if (data == 0) {
+            // SYNCING...
+        } else {
+            // NOT SYNCING...
+        }
+    }
+
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        Log.i("CAME TO ONDATA", "OUI");
-        for (DataEvent event : dataEvents) {
-            if (event.getType() == DataEvent.TYPE_CHANGED &&
-                    event.getDataItem().getUri().getPath().equals(CHATROOM_DATA_PATH)) {
-                DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-                Asset asset = dataMapItem.getDataMap().getAsset(context.getString(R.string.chatrooms_key));
-                List<ChatRoom2> chatRooms = loadChatRoomsFromAsset(asset);
-                // Do something with the bitmap
+    public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_DELETED) {
+//                this.binding.testText.setText(context.getString(R.string.test_string_2));
+            } else if (event.getType() == DataEvent.TYPE_CHANGED) {
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
+                    displayListenerState(item);
+                }
             }
         }
     }
 
-    public List<ChatRoom2> loadChatRoomsFromAsset(Asset asset) {
-        if (asset == null) {
-            throw new IllegalArgumentException("Asset must be non-null");
-        }
-        try {
-            // Convert asset into a file descriptor and block until it's available.
-            DataClient dataClient = Wearable.getDataClient(context);
-            InputStream assetInputStream =
-                    Tasks.await(dataClient.getFdForAsset(asset)).getInputStream();
+    @Override
+    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
+        if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
+            HelperUtils2.showToast("Chatroom Data received", context);
+            byte[] data = messageEvent.getData();
 
-            if (assetInputStream == null) {
-                Log.w(TAG, "Requested an unknown Asset.");
-                return null;
+            // COME BACK HERE!!!!! CHECK IF NULL
+            List<ChatRoom2> chatRooms = HelperUtils2.convertJSONDataToChatroomList(data);
+
+            String testResult = chatRooms == null ? "null" : chatRooms.toString();
+//            binding.testText.setText(testResult);
+            Log.i("SYNC DATA", "Received Chatroom list from watch: " + testResult);
+            if (chatRooms != null) {
+                Log.i("SYNC DATA", "Chatroom example title: " + chatRooms.get(0).getTitle());
+                for (ChatRoom2 chatRoom : chatRooms) {
+                    ChatResponseUtils2.saveMessage(chatRoom, context);
+                }
             }
-            // Read the stream into a ByteArrayOutputStream.
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = assetInputStream.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
-            }
-            assetInputStream.close();
-            // Convert the byte array to a String using UTF-8.
-            String json = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-            Log.d(TAG, "Loaded chatrooms JSON: " + json);
-            // Deserialize the JSON string into a List<ChatRoom> using Gson.
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<ChatRoom2>>(){}.getType();
-            Log.i("RECEIVED CHATROOMS", json);
-            List<ChatRoom2> chatRooms = gson.fromJson(json, listType);
-            return chatRooms;
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading chat rooms from asset", e);
-            return null;
         }
     }
 
+    /**
 
+    SEND DATA TO WATCH
+
+     **/
+    public void sendChatRooms() {
+        // Retrieve the current chatrooms from SharedPreferences (or your chosen persistence)
+        List<ChatRoom2> chatRooms = ChatResponseUtils2.getChatRooms(context);
+
+        String chatRoomsJsonArrayString = HelperUtils2.convertChatRoomListToJSON(chatRooms);
+
+        // Convert the JSON string into a byte array
+        byte[] dataToSend = chatRoomsJsonArrayString.getBytes();
+
+        // Determine the best node to send to
+        CapabilityClient capabilityClient = Wearable.getCapabilityClient(context);
+        Task<CapabilityInfo> task = capabilityClient.getCapability(CAPABILITY_NAME, CapabilityClient.FILTER_ALL);
+        task.addOnSuccessListener(new OnSuccessListener<CapabilityInfo>() {
+            @Override
+            public void onSuccess(CapabilityInfo capabilityInfo) {
+                sendToNodeForChatRooms(capabilityInfo, dataToSend);
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                HelperUtils2.showToast(context.getString(R.string.failed_string), context);
+            }
+        });
+    }
+
+    private void sendToNodeForChatRooms(CapabilityInfo capabilityInfo, byte[] data) {
+        Set<Node> connectedNodes = capabilityInfo.getNodes();
+        String bestNodeId = pickBestNodeId(connectedNodes);
+
+        if (bestNodeId == null) {
+            HelperUtils2.showToast(context.getString(R.string.no_node_error), context);
+            return;
+        }
+        sendChatRoomData(data, bestNodeId);
+    }
+
+    private String pickBestNodeId(Set<Node> nodes) {
+        String bestNodeId = null;
+
+        for (Node node : nodes) {
+            if (node.isNearby()) {
+                return node.getId();
+            }
+            bestNodeId = node.getId();
+        }
+
+        return bestNodeId;
+    }
+
+    private void sendChatRoomData(byte[] dataToSend, String nodeId) {
+        MessageClient messageClient = Wearable.getMessageClient(context);
+        Task<Integer> sendTask = messageClient.sendMessage(nodeId, CHATROOM_DATA_PATH, dataToSend);
+        sendTask.addOnSuccessListener(new OnSuccessListener<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                HelperUtils2.showToast("Chat rooms sync successful", context);
+                Log.d(TAG, "Successfully sent chatrooms to node: " + nodeId);
+            }
+        });
+        sendTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                HelperUtils2.showToast("Chat rooms sync failed", context);
+                Log.e(TAG, "Failed to send chatrooms to node: " + nodeId, e);
+            }
+        });
+    }
 }

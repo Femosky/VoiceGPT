@@ -30,7 +30,6 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
     }
 
     public ChatHistoryAdapter(List<ChatRoom> rooms) {
-//        super();
         this.chatRooms = rooms;
     }
 

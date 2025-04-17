@@ -9,10 +9,19 @@ import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HelperUtils2 {
+
+    public static String formatShortDate(long timestampSeconds) {
+        long millis = timestampSeconds * 1000L;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        return simpleDateFormat.format(new Date(millis));
+    }
 
     public static List<ChatRoom2> convertJSONDataToChatroomList(byte[] jsonArrayChatRooms) {
         String jsonString = new String(jsonArrayChatRooms);

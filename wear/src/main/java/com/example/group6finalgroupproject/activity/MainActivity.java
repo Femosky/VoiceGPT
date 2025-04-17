@@ -20,6 +20,7 @@ import com.example.group6finalgroupproject.helper.ChatRoomManager;
 import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.service.ChatGPTAPI;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,9 +28,8 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    private TextToSpeech textToSpeech;
     private static final int SPEECH_REQUEST_CODE = 100;
-    private String lastResponse = "";
+    private ChatSyncManager chatSyncManager;
 
     ChatRoom chatRoom = ChatRoomManager.getChatRoom();
 
@@ -43,40 +43,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
 
         init();
+
+        chatSyncManager = ChatSyncManager.getInstance(this);
     }
 
     // Load startup code for the screen
     private void init() {
-        // Initialize TextToSpeech Listener
-        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                Log.d("TTS", "onInit status: " + status);
-                if (status == TextToSpeech.SUCCESS) {
-                    textToSpeech.setLanguage(Locale.getDefault());
-                } else {
-                    Toast.makeText(MainActivity.this, getString(R.string.tts_init_failed), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // Set up listener for sending prompt
-        binding.sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChatSyncManager.getInstance(MainActivity.this).sendChatRooms();
-//                String userPrompt = binding.promptText.getText().toString();
-//
-//                if (userPrompt.isEmpty()) {
-//                    Toast.makeText(MainActivity.this, getString(R.string.empty_prompt_error_message), Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                long timestamp = System.currentTimeMillis() / 1000;
-//                ChatGPTAPI.postPrompt(MainActivity.this, chatRoom, userPrompt, timestamp, false);
-            }
-        });
-
         // Set up mic button listener
         binding.resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,11 +98,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
-        super.onDestroy();
+    protected void onResume() {
+        super.onResume();
+        // Register the listener when the activity comes to the foreground.
+        Wearable.getDataClient(this).addListener(chatSyncManager);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener when the activity goes to the background.
+        Wearable.getDataClient(this).removeListener(chatSyncManager);
     }
 }

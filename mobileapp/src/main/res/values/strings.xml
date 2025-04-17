@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">MobileApp</string>
 
-    <string name="test_string">Test</string>
     <string name="string_URL_endpoint">https://api.openai.com/v1/chat/completions</string>
     <string name="enter_message">Enter message</string>
     <string name="voice_input">Voice Input</string>
@@ -9,5 +8,45 @@
     <string name="prompt_input_hint">Prompt Input</string>
     <string name="syncing_data">"Syncing data…"</string>
     <string name="test_string_2">No data</string>
+
+    <string name="post_prompt_url">https://api.openai.com/v1/chat/completions</string>
+    <string name="chatGPT_payload_model">gpt-4o-mini</string>
+
+    <string name="test_string">Test</string>
+    <string name="mic_button_description">Mic Button</string>
+    <string name="response_textview">Response goes here</string>
+    <string name="prompt_textview">Prompt goes here</string>
+    <string name="tts_init_failed">Text to Speech initialization failed</string>
+    <string name="unexpected_code">"Unexpected code "</string>
+    <string name="messages_string">messages</string>
+    <string name="content_string">content</string>
+
+    <string name="model_string">model</string>
+    <string name="store_string">store</string>
+    <string name="user_string">user</string>
+    <string name="role_string">role</string>
+    <string name="send_button_icon_description">Send Button Icon</string>
+    <string name="empty_prompt_error_message">Please enter a prompt first</string>
+    <string name="chats_sharedPreferencesKey">Chats</string>
+    <string name="chats_sharedPreferencesPrefix">chat_</string>
+    <string name="assistant_string">assistant</string>
+    <string name="chat_history">Chat History</string>
+    <string name="chat_history_button">Chat History</string>
+    <string name="max_tokens_string">max_tokens</string>
+    <string name="pre_prompt_for_length">"In a max of a ten word sentence, briefly answer: "</string>
+    <string name="reset_button_description">Reset Button</string>
+    <string name="empty_string" />
+    <string name="came_from_main_activity">came_from_main_activity</string>
+    <string name="chat_room_id">chat_room_id</string>
+    <string name="failed_string">Failed!</string>
+    <string name="no_node_error">No node found</string>
     <string name="chatrooms_key">chatrooms</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hamburger_menu">Hamburger menu</string>
+    <string name="history_button_text">History</string>
+    <string name="new_chat_button">New Chat</string>
+    <string name="loading">Loading...</string>
+    <string name="bearer_pre_header_string">"Bearer "</string>
+    <string name="authorization_pre_header_string">Authorization</string>
 </resources>

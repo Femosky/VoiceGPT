@@ -15,7 +15,7 @@
         android:id="@+id/messageItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/empty_string"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="@color/black"

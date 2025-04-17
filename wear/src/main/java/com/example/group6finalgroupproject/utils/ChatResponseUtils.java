@@ -61,6 +61,22 @@ public class ChatResponseUtils {
             }
         }
 
+        chatRooms.sort((a, b) -> {
+            long lastA = getLastTimestamp(a);
+            long lastB = getLastTimestamp(b);
+
+            return Long.compare(lastB, lastA);
+        });
+
         return chatRooms;
+    }
+
+    private static long getLastTimestamp(ChatRoom room) {
+        List<MessageItem> list = room.getChatList();
+        if (list != null && !list.isEmpty()) {
+            // last message in chronological order
+            return list.get(list.size() - 1).getCreated();
+        }
+        return room.getCreated();
     }
 }

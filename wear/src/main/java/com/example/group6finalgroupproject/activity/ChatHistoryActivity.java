@@ -16,8 +16,10 @@ import androidx.wear.widget.WearableRecyclerView;
 import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.adapter.ChatHistoryAdapter;
 import com.example.group6finalgroupproject.databinding.ActivityChatHistoryBinding;
+import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.utils.ChatResponseUtils;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
     ActivityChatHistoryBinding binding;
     private List<ChatRoom> chatRooms = new ArrayList<>();
+    private ChatSyncManager chatSyncManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class ChatHistoryActivity extends AppCompatActivity {
         setContentView(view);
 
         init();
+
+        chatSyncManager = ChatSyncManager.getInstance(this);
     }
 
     // Load startup code for the screen
@@ -45,9 +50,6 @@ public class ChatHistoryActivity extends AppCompatActivity {
         recyclerView.setEdgeItemsCenteringEnabled(true);
 
         chatRooms = ChatResponseUtils.getChatRooms(this);
-        if (chatRooms.size() > 0) {
-            Log.i("VALUE IS", chatRooms.get(0).getTitle());
-        }
 
         recyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
         ChatHistoryAdapter adapter = new ChatHistoryAdapter(chatRooms);
@@ -55,11 +57,25 @@ public class ChatHistoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(ChatRoom chatRoom) {
                 Intent intent = new Intent(ChatHistoryActivity.this, ChatRoomActivity.class);
-                intent.putExtra("chat_room_id", chatRoom.getId());
+                intent.putExtra(getString(R.string.chat_room_id), chatRoom.getId());
                 startActivity(intent); // Takes us to the Chat Room screen
             }
         });
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Register the listener when the activity comes to the foreground.
+        Wearable.getDataClient(this).addListener(chatSyncManager);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener when the activity goes to the background.
+        Wearable.getDataClient(this).removeListener(chatSyncManager);
     }
 }

@@ -15,8 +15,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.MessageClient;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -30,7 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 
-public class ChatSyncManager {
+public class ChatSyncManager implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private Context context;
     private static final String LISTENER_STATE_PATH = "/listenerState";
     private static final String TAG = "ChatSyncManager";
@@ -48,8 +53,91 @@ public class ChatSyncManager {
         if (instance == null) {
             instance = new ChatSyncManager(context);
         }
+
+        // LOAD RECEIVER INIT FUNCTION
+        instance.init();
         return instance;
     }
+
+    /**
+
+     RECEIVE DATA FROM PHONE
+
+     **/
+
+    private void init() {
+        Wearable.getMessageClient(context).addListener(this);
+        readCurrentListenerState();
+        Wearable.getDataClient(context).addListener(this);
+    }
+
+    private void readCurrentListenerState() {
+        Task<DataItemBuffer> task = Wearable.getDataClient(context).getDataItems();
+        task.addOnSuccessListener(new OnSuccessListener<DataItemBuffer>() {
+            @Override
+            public void onSuccess(DataItemBuffer dataItems) {
+                for (DataItem item : dataItems) {
+                    if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
+                        displayListenerState(item);
+                        return;
+                    }
+                }
+//                MainActivity2.this.binding.testText.setText("No data");
+            }
+        });
+    }
+
+    // USE IT AS LOADER STATE FOR SYNCING
+    private void displayListenerState(DataItem item) {
+        byte data = item.getData()[0];
+        if (data == 0) {
+            // SYNCING...
+        } else {
+            // NOT SYNCING...
+        }
+    }
+
+    @Override
+    public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_DELETED) {
+//                this.binding.testText.setText(context.getString(R.string.test_string_2));
+            } else if (event.getType() == DataEvent.TYPE_CHANGED) {
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
+                    displayListenerState(item);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
+        if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
+            HelperUtils.showToast("Chatroom Data received", context);
+            byte[] data = messageEvent.getData();
+
+            // COME BACK HERE!!!!! CHECK IF NULL
+            List<ChatRoom> chatRooms = HelperUtils.convertJSONDataToChatroomList(data);
+
+            String testResult = chatRooms == null ? "null" : chatRooms.toString();
+//            binding.testText.setText(testResult);
+            Log.i("SYNC DATA", "Received Chatroom list from phone: " + testResult);
+            if (chatRooms != null) {
+                Log.i("SYNC DATA", "Chatroom example title: " + chatRooms.get(0).getTitle());
+
+                for (ChatRoom chatRoom : chatRooms) {
+                    ChatResponseUtils.saveMessage(chatRoom, context);
+                }
+            }
+        }
+    }
+
+    /**
+
+     SEND TO DATA PHONE
+
+     **/
 
     public void sendChatRooms() {
         // Retrieve the current chatrooms from SharedPreferences (or your chosen persistence)
@@ -80,9 +168,6 @@ public class ChatSyncManager {
     private void sendToNodeForChatRooms(CapabilityInfo capabilityInfo, byte[] data) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
         String bestNodeId = pickBestNodeId(connectedNodes);
-
-        Log.d("CONNECTED NODES", connectedNodes.toString());
-        Log.d("BEST NODE ID", bestNodeId == null ? "null" : bestNodeId);
 
         if (bestNodeId == null) {
             HelperUtils.showToast(context.getString(R.string.no_node_error), context);
@@ -123,32 +208,3 @@ public class ChatSyncManager {
         });
     }
 }
-
-//private Asset createAssetFromChatRooms() {
-//    List<ChatRoom> chatRooms = ChatResponseUtils.getChatRooms(context);
-//    JSONArray jsonArrayChatRooms = new JSONArray();
-//    for (ChatRoom chatRoom : chatRooms) {
-//        String jsonChatRooms = ChatResponseUtils.convertChatRoomToJSON(chatRoom);
-//        jsonArrayChatRooms.put(jsonChatRooms);
-//    }
-//
-//    String chatRoomsJSONString = jsonArrayChatRooms.toString();
-//    final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-//    try {
-//        byteStream.write(chatRoomsJSONString.getBytes(StandardCharsets.UTF_8));
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//    }
-//
-//    return Asset.createFromBytes(byteStream.toByteArray());
-//}
-//
-//public void sendChatRooms() {
-//    Asset asset = createAssetFromChatRooms();
-//    PutDataRequest request = PutDataRequest.create(CHATROOM_DATA_PATH);
-//    request.putAsset(context.getString(R.string.chatrooms_key), asset);
-//    Task<DataItem> putTask = Wearable.getDataClient(context).putDataItem(request);
-//    Log.i("TASK SENT", putTask.toString());
-//}
-
-

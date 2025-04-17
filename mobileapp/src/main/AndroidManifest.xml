@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Group6FinalGroupProject">
         <activity
+            android:name=".activity.ChatHistoryActivity2"
+            android:exported="false" />
+        <activity
             android:name=".activity.MainActivity2"
             android:exported="true">
             <intent-filter>
