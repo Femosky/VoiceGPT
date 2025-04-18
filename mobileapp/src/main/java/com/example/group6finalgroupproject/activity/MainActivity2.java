@@ -75,6 +75,8 @@ public class MainActivity2 extends AppCompatActivity {
 
         if (chatRoomId != null) {
             chatRoom = ChatResponseUtils2.getChatRoom(this, chatRoomId);
+        } else {
+            chatRoomId = chatRoom.getId();
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -152,7 +154,9 @@ public class MainActivity2 extends AppCompatActivity {
 
     public void refreshChatRoom() {
         // always show the singleton
-        chatRoom = ChatResponseUtils2.getChatRoom(this, chatRoomId);
+        if (chatRoomId != null) {
+            chatRoom = ChatResponseUtils2.getChatRoom(this, chatRoomId);
+        }
 
         adapter.setChatRoom(chatRoom);
         adapter.notifyDataSetChanged();

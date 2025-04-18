@@ -17,9 +17,9 @@
         <!-- Message list -->
         <androidx.wear.widget.WearableRecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:padding="0dp"
+            android:layout_width="@dimen/_0dp"
+            android:layout_height="@dimen/_170dp"
+            android:padding="@dimen/_0dp"
             app:layout_constraintBottom_toTopOf="@+id/buttonRow"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +32,6 @@
             android:id="@+id/buttonRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:orientation="horizontal"
@@ -43,33 +42,33 @@
 
             <ImageButton
                 android:id="@+id/reListenButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="4dp"
+                android:layout_width="@dimen/_40dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_marginEnd="@dimen/_4dp"
                 android:background="@drawable/bg_circle"
                 android:contentDescription="@string/re_listen_button_description"
-                android:padding="12dp"
+                android:padding="@dimen/_12dp"
                 android:src="@drawable/ic_play"
                 app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/newChatButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="4dp"
+                android:layout_width="@dimen/_40dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_marginEnd="@dimen/_4dp"
                 android:background="@drawable/bg_circle"
                 android:contentDescription="@string/new_chat_description"
-                android:padding="12dp"
+                android:padding="@dimen/_12dp"
                 android:src="@drawable/ic_add"
                 app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/micButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/_40dp"
+                android:layout_height="@dimen/_40dp"
                 android:background="@drawable/bg_circle"
                 android:contentDescription="@string/mic_button_description"
-                android:padding="12dp"
+                android:padding="@dimen/_12dp"
                 android:src="@drawable/ic_mic"
                 app:tint="@color/white" />
         </LinearLayout>

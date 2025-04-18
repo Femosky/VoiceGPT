@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.group6finalgroupproject.BuildConfig;
 import com.example.group6finalgroupproject.R;
+import com.example.group6finalgroupproject.activity.ChatHistoryActivity2;
 import com.example.group6finalgroupproject.activity.MainActivity2;
 import com.example.group6finalgroupproject.helpers.ChatRoomManager2;
 import com.example.group6finalgroupproject.helpers.ChatSyncManager2;
@@ -37,7 +38,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class ChatGPTAPI2 {
-    private static JSONObject parseStringToJSONObject(MainActivity2 context, ChatRoom2 contextChatRoom, String userPrompt) {
+    private static JSONObject parseStringToJSONObject(Context context, ChatRoom2 contextChatRoom, String userPrompt) {
         // Build the chat completion payload
         try {
             JSONObject jsonObject = new JSONObject();
@@ -72,10 +73,10 @@ public class ChatGPTAPI2 {
             return null;
         }
     }
-    public static void postPrompt(MainActivity2 context, ChatRoom2 contextChatRoom, String userPrompt, long timestamp) {
+    public static void postPrompt(Context context, ChatRoom2 contextChatRoom, String userPrompt, long timestamp) {
         if (userPrompt.isEmpty()) {
             // Don't send a prompt query if the user prompt is empty
-            context.runOnUiThread(() -> context.setIsLoading(false));
+            stopLoading(context);
             return;
         }
 
@@ -83,7 +84,7 @@ public class ChatGPTAPI2 {
 
         if (payloadObject == null) {
             // Break out of post function
-            context.runOnUiThread(() -> context.setIsLoading(false));
+            stopLoading(context);
             return;
         }
 
@@ -103,7 +104,7 @@ public class ChatGPTAPI2 {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     e.printStackTrace();
-                    context.runOnUiThread(() -> context.setIsLoading(false));
+                    stopLoading(context);
                 }
 
                 @Override
@@ -150,7 +151,6 @@ public class ChatGPTAPI2 {
                         messageItem.setMessage(result);
 
                         if (chatRoom.getChatList().isEmpty()) {
-                            Log.i("CAME HERE", "IT DID");
                             // SET NEW TITLE AND DATE
                             chatRoom.setTitle(result); // FOR NOW, CHANGE LATER IF POSSIBLE!!!
 
@@ -169,25 +169,44 @@ public class ChatGPTAPI2 {
                         ChatResponseUtils2.saveMessage(chatRoom, context);
                         ChatSyncManager2.getInstance(context).sendChatRooms();
 
-                        // Refresh the chat room
-                        // Runs on the UI thread
-                        context.runOnUiThread(() -> context.refreshChatRoom());
+                        // Refresh the chat room UI
+                        refreshPage(context);
 
                         Log.i("CHAT RESPONSE", result);
                     } catch (IOException e) {
-                        context.runOnUiThread(() -> context.setIsLoading(false));
+                        stopLoading(context);
                         e.printStackTrace();
                     } finally {
-                        context.runOnUiThread(() -> context.setIsLoading(false));
+                        stopLoading(context);
                     }
                 }
             });
 
         } catch (Exception e) {
-            context.runOnUiThread(() -> context.setIsLoading(false));
+            stopLoading(context);
             e.printStackTrace();
         } finally {
-            context.runOnUiThread(() -> context.setIsLoading(false));
+            stopLoading(context);
+        }
+    }
+
+    public static void refreshPage(Context context) {
+        // Runs on the UI thread
+        if (context instanceof MainActivity2) {
+            MainActivity2 activity = (MainActivity2)context;
+            activity.runOnUiThread(() -> {
+                activity.refreshChatRoom();
+            });
+        }
+    }
+
+    public static void stopLoading(Context context) {
+        // Runs on the UI thread
+        if (context instanceof MainActivity2) {
+            MainActivity2 activity = (MainActivity2)context;
+            activity.runOnUiThread(() -> {
+                activity.setIsLoading(false);
+            });
         }
     }
 }

@@ -22,6 +22,7 @@ import com.example.group6finalgroupproject.R;
 import com.example.group6finalgroupproject.adapter.ChatHistoryAdapter;
 import com.example.group6finalgroupproject.adapter.ChatRoomAdapter;
 import com.example.group6finalgroupproject.databinding.ActivityChatRoomBinding;
+import com.example.group6finalgroupproject.helper.ChatRoomManager;
 import com.example.group6finalgroupproject.helper.ChatSyncManager;
 import com.example.group6finalgroupproject.model.ChatRoom;
 import com.example.group6finalgroupproject.model.MessageItem;
@@ -95,6 +96,11 @@ public class ChatRoomActivity extends AppCompatActivity {
         recyclerView.setEdgeItemsCenteringEnabled(true);
 
         chatRoomId = getIntent().getStringExtra(getString(R.string.chat_room_id));
+
+        if (chatRoomId == null) {
+            chatRoomId = chatRoom.getId();
+        }
+
         chatRoom = ChatResponseUtils.getChatRoom(this, chatRoomId);
 
         WearableLinearLayoutManager manager = new WearableLinearLayoutManager(this);
@@ -144,7 +150,8 @@ public class ChatRoomActivity extends AppCompatActivity {
         binding.newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chatRoom.resetChatRoom();
+//                chatRoom.resetChatRoom();
+                ChatRoomManager.setChatRoom(new ChatRoom());
                 startActivity(new Intent(ChatRoomActivity.this, MainActivity.class));
             }
         });

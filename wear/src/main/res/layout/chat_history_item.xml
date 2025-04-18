@@ -5,19 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp"
-    android:layout_marginVertical="8dp"
+    android:padding="@dimen/_12dp"
+    android:layout_marginVertical="@dimen/_8dp"
     android:background="@drawable/bg_chat_item"
     app:layout_boxedEdges="left|right">
 
     <TextView
         android:id="@+id/chatTitle"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/_0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text=""
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="@dimen/_14sp"
         android:ellipsize="end"
         android:maxLines="1"/>
 </LinearLayout>

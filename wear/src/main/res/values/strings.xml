@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Group6FinalGroupProject</string>
+    <string name="app_name">VoiceGPT</string>
 
     <string name="post_prompt_url">https://api.openai.com/v1/chat/completions</string>
     <string name="chatGPT_payload_model">gpt-4o-mini</string>

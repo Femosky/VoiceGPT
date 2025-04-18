@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MobileApp</string>
+    <string name="app_name">VoiceGPT</string>
 
     <string name="string_URL_endpoint">https://api.openai.com/v1/chat/completions</string>
     <string name="enter_message">Enter message</string>
