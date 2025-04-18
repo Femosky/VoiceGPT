@@ -31,6 +31,15 @@ public class ChatHistoryActivity extends AppCompatActivity {
     private ChatSyncManager chatSyncManager;
     private ChatHistoryAdapter adapter;
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.
+     *                           <b><i>Note: Otherwise it is null.</i></b>
+     * Inflate layout and obtain root view
+     * Initialize RecyclerView, load data, and set up click handlers
+     * Obtain singleton instance to listen for sync events
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +53,15 @@ public class ChatHistoryActivity extends AppCompatActivity {
         chatSyncManager = ChatSyncManager.getInstance(this);
     }
 
-    // Load startup code for the screen
+    /**
+     * Load startup code for the screen
+     * Initialize the history list: configure RecyclerView,
+     * load existing chat rooms, and attach adapter with click listener.
+     * Center items at edges when scrolling
+     * Load saved chat rooms from local storage
+     * Use a WearableLinearLayoutManager for Wear OS styling
+     * When a history item is tapped, open its ChatRoomActivity
+     */
     public void init() {
         WearableRecyclerView recyclerView = binding.recyclerView;
         recyclerView.setHasFixedSize(true);
@@ -66,6 +83,9 @@ public class ChatHistoryActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Refresh the displayed list of chat rooms—e.g., after a sync event.
+     */
     public void refreshHistoryList() {
         chatRooms = ChatResponseUtils.getChatRooms(ChatHistoryActivity.this);
 
@@ -74,6 +94,10 @@ public class ChatHistoryActivity extends AppCompatActivity {
         Log.i("MainActivity2", "Chat room refreshed!");
     }
 
+    /**
+     * Begin listening for data layer events when visible
+     * Register the listener when the activity comes to the foreground.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -81,6 +105,10 @@ public class ChatHistoryActivity extends AppCompatActivity {
         Wearable.getDataClient(this).addListener(chatSyncManager);
     }
 
+    /**
+     * Stop listening when going into background
+     * Unregister the listener when the activity goes to the background.
+     */
     @Override
     protected void onPause() {
         super.onPause();

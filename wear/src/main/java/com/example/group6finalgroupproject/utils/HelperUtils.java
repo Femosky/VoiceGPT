@@ -18,13 +18,19 @@ import java.util.List;
 import java.util.Locale;
 
 public class HelperUtils {
-
+    /**
+     * Format a Unix timestamp (seconds) into a short date string dd/MM/yy.
+     */
     public static String formatShortDate(long timestampSeconds) {
         long millis = timestampSeconds * 1000L;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
         return simpleDateFormat.format(new Date(millis));
     }
 
+    /**
+     * Convert a byte[] containing a JSON array of ChatRoom JSON strings
+     * into a List<ChatRoom> by deserializing each element.
+     */
     public static List<ChatRoom> convertJSONDataToChatroomList(byte[] jsonArrayChatRooms) {
         String jsonString = new String(jsonArrayChatRooms);
 
@@ -46,21 +52,33 @@ public class HelperUtils {
         }
     }
 
+    /**
+     * Serialize a single ChatRoom into its JSON string form.
+     */
     public static String convertChatRoomToJSON(ChatRoom chatRoom) {
         Gson gson = new Gson();
         return gson.toJson(chatRoom);
     }
 
+    /**
+     * Deserialize a JSON string back into a ChatRoom object.
+     */
     public static ChatRoom convertJSONToChatRoom(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, ChatRoom.class);
     }
 
+    /**
+     * Serialize a List<ChatRoom> into a JSON array string.
+     */
     public static String convertChatRoomListToJSON(List<ChatRoom> chatRoom) {
         Gson gson = new Gson();
         return gson.toJson(chatRoom);
     }
 
+    /**
+     * Display a short Toast message.
+     */
     public static void showToast(String text, Context context) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }

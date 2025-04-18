@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Represents a single completion choice returned by ChatGPT API.
+ * Contains the message payload and metadata about logging and finish reason.
+ */
 public class Choice2 {
     private int index;
     private Message2 message;

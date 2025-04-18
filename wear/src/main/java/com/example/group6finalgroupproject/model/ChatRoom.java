@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a single conversation thread.
+ * Holds messages and metadata like title and creation timestamp.
+ */
 public class ChatRoom {
     private String id;
     private String title;
@@ -35,10 +39,13 @@ public class ChatRoom {
     public List<MessageItem> getChatList() {
         return chatList;
     }
+
+    /** Append a single message to this room */
     public void appendChatList(MessageItem messageItem) {
         this.chatList.add(messageItem);
     }
 
+    /** Clear existing messages and assign new ID/timestamp */
     public void resetChatRoom() {
         this.id = UUID.randomUUID().toString();
         this.title = null;

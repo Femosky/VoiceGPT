@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a single chat session (“room”) on the phone.
+ * Holds a unique ID, an optional title, creation timestamp,
+ * and an ordered list of MessageItem2 instances.
+ */
 public class ChatRoom2 {
     private String id;
     private String title;
     private long created;
     final private List<MessageItem2> chatList = new ArrayList<>();
 
-    // Assign an ID to each ChatRoom Object
+    /**
+     * Constructor: generates a new UUID and sets up an empty message list.
+     */
     public ChatRoom2() {
         // Generate a unique identifier using UUID.
         this.id = UUID.randomUUID().toString();
@@ -35,10 +42,16 @@ public class ChatRoom2 {
     public List<MessageItem2> getChatList() {
         return chatList;
     }
+
+    /** Append a single message to this ChatRoom2. */
     public void appendChatList(MessageItem2 messageItem) {
         this.chatList.add(messageItem);
     }
 
+    /**
+     * Reset this chat room for a brand-new conversation:
+     * generates a new ID, clears title, resets timestamp, and empties messages.
+     */
     public void resetChatRoom() {
         this.id = UUID.randomUUID().toString();
         this.title = null;

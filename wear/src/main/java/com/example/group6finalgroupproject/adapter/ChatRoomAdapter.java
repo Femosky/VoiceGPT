@@ -26,7 +26,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
         this.chatRoom = room;
     }
 
-    // Setters
+    /**
+     * Update which chatRoom this adapter shows
+     *
+     * @param chatRoom
+     */
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
     }
@@ -50,6 +54,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
         return chatRoom.getChatList().size();
     }
 
+    /**
+     * ViewHolder for individual message bubbles
+     */
     public static class ChatRoomViewHolder extends RecyclerView.ViewHolder {
         private final ChatRoomItemBinding binding;
 
@@ -58,6 +65,10 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
             this.binding = binding;
         }
 
+        /**
+         * Display the message text and choose background
+         * based on whether it came from user or assistant.
+         */
         public void bind(MessageItem messageItem) {
             Context context = binding.getRoot().getContext();
             String message = messageItem.getMessage();

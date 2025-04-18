@@ -16,8 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility class for saving, retrieving, and listing ChatRoom objects
+ * using Android's SharedPreferences as JSON storage.
+ */
 public class ChatResponseUtils {
-    // Save the task in SharedPreferences as a JSON string
+    /**
+     * Persist a ChatRoom's JSON representation in SharedPreferences.
+     * @param chatRoom the ChatRoom to save
+     * @param context  Android Context for accessing preferences
+     */
     public static void saveMessage(ChatRoom chatRoom, Context context) {
         if (chatRoom != null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
@@ -30,6 +38,12 @@ public class ChatResponseUtils {
         }
     }
 
+    /**
+     * Retrieve a single ChatRoom by its ID from SharedPreferences.
+     * @param context     Android Context to access preferences
+     * @param chatRoomId  ID of the ChatRoom to fetch
+     * @return the ChatRoom if found, or null otherwise
+     */
     public static ChatRoom getChatRoom(Context context, String chatRoomId) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(
                 context.getString(R.string.chats_sharedPreferencesKey),
@@ -43,6 +57,11 @@ public class ChatResponseUtils {
         }
     }
 
+    /**
+     * Retrieve all stored ChatRoom objects, sorted by latest message timestamp.
+     * @param context Android Context to access preferences
+     * @return list of ChatRoom instances, most recently active first
+     */
     public static List<ChatRoom> getChatRooms(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
         List<ChatRoom> chatRooms = new ArrayList<>();
@@ -71,6 +90,10 @@ public class ChatResponseUtils {
         return chatRooms;
     }
 
+    /**
+     * Helper to get the last activity timestamp for a chat room.
+     * Falls back to room creation time if no messages exist.
+     */
     private static long getLastTimestamp(ChatRoom room) {
         List<MessageItem> list = room.getChatList();
         if (list != null && !list.isEmpty()) {

@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Represents one of the possible completions (choices)
+ * returned by the ChatGPT API.
+ */
 public class Choice {
     private int index;
     private Message message;

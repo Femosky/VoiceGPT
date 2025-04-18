@@ -15,12 +15,18 @@ import com.example.group6finalgroupproject.utils.HelperUtils2;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying chat room summaries in ChatHistoryActivity2.
+ * Shows title and last message date for each ChatRoom2.
+ */
 public class ChatHistoryAdapter2 extends RecyclerView.Adapter<ChatHistoryAdapter2.ChatHistoryViewHolder2> {
     private List<ChatRoom2> chatRooms;
     ActivityChatHistory2Binding binding;
     private OnItemClickListener listener;
 
-    // Define an interface for click callbacks
+    /**
+     * Callback interface for item taps
+     */
     public interface OnItemClickListener {
         void onItemClick(ChatRoom2 chatRoom);
     }
@@ -34,6 +40,9 @@ public class ChatHistoryAdapter2 extends RecyclerView.Adapter<ChatHistoryAdapter
         this.chatRooms = rooms;
     }
 
+    /**
+     * Update the adapter's data set
+     */
     public void setChatRooms(List<ChatRoom2> newChatRooms) {
         this.chatRooms = newChatRooms;
     }
@@ -57,6 +66,9 @@ public class ChatHistoryAdapter2 extends RecyclerView.Adapter<ChatHistoryAdapter
         return chatRooms.size();
     }
 
+    /**
+     * ViewHolder for a single chat summary item
+     */
     public static class ChatHistoryViewHolder2 extends RecyclerView.ViewHolder {
         private final ChatHistoryItem2Binding binding;
 
@@ -65,6 +77,9 @@ public class ChatHistoryAdapter2 extends RecyclerView.Adapter<ChatHistoryAdapter
             this.binding = binding;
         }
 
+        /**
+         * Bind title, date, and click callback
+         */
         public void bind(final ChatRoom2 chatRoom, final OnItemClickListener listener) {
             String title = chatRoom.getTitle();
             binding.chatTitle.setText(title);

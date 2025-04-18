@@ -43,6 +43,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main chat interface for Wear OS: shows messages, handles input,
+ * and interacts with ChatGPTAPI2 service.
+ */
 public class MainActivity2 extends AppCompatActivity {
 
     ActivityMain2Binding binding;
@@ -66,7 +70,10 @@ public class MainActivity2 extends AppCompatActivity {
         chatSyncManager = ChatSyncManager2.getInstance(this);
     }
 
-    // To run start up code
+    /**
+     * Set up RecyclerView, determine which chat room to load,
+     * and attach listeners for buttons.
+     */
     private void init() {
         RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setHasFixedSize(true);
@@ -90,6 +97,9 @@ public class MainActivity2 extends AppCompatActivity {
         loadListeners();
     }
 
+    /**
+     * Wire up click handlers for new chat, history, sync, mic, and send buttons.
+     */
     public void loadListeners() {
         binding.newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,10 +158,14 @@ public class MainActivity2 extends AppCompatActivity {
         });
     }
 
+
     public ChatRoom2 getCurrentChatRoom() {
         return chatRoom;
     }
 
+    /**
+     * Refresh local chat messages from storage and scroll to bottom.
+     */
     public void refreshChatRoom() {
         // always show the singleton
         if (chatRoomId != null) {
@@ -168,6 +182,9 @@ public class MainActivity2 extends AppCompatActivity {
         Log.i("MainActivity2", "Chat room refreshed!");
     }
 
+    /**
+     * Show or hide a loading indicator based on API call state.
+     */
     public void setIsLoading(Boolean status) {
         isLoading = status;
 
@@ -178,6 +195,9 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 
+    /**
+     * Launch Android's speech recognizer for voice input.
+     */
     public void startVoiceInputCapture() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);

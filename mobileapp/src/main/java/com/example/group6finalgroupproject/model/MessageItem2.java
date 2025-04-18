@@ -2,6 +2,10 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.UUID;
 
+/**
+ * Local representation of a single chat message in ChatRoom2.
+ * Contains metadata for persistence and display.
+ */
 public class MessageItem2 {
     private String id;
     private long created;

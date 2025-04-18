@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Detailed token usage information for the prompt side
+ * of the ChatGPT API request.
+ */
 public class PromptTokensDetails2 {
     private int cached_tokens;
     private int audio_tokens;

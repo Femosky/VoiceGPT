@@ -2,6 +2,10 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.List;
 
+/**
+ * Represents the content and metadata of a single message
+ * within a ChatResponse2 choice.
+ */
 public class Message2 {
     private String role;
     private String content;

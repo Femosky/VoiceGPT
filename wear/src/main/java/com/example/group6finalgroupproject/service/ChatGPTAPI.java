@@ -38,7 +38,21 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+/**
+ * Service class responsible for communicating with the ChatGPT API
+ * over HTTP, processing responses, updating local chat data, and
+ * triggering UI updates or navigation as needed.
+ */
 public class ChatGPTAPI {
+    /**
+     * Build the JSON payload for the ChatGPT completion request.
+     * Includes model, storage flag, and message history plus the new prompt.
+     *
+     * @param context          Android context for resource lookup
+     * @param contextChatRoom  Current ChatRoom object holding past messages
+     * @param userPrompt       The new user prompt to send
+     * @return JSONObject ready to send as request body, or null on error
+     */
     private static JSONObject parseStringToJSONObject(Context context, ChatRoom contextChatRoom, String userPrompt) {
         // Build the chat completion payload
         try {
@@ -75,6 +89,16 @@ public class ChatGPTAPI {
         }
     }
 
+    /**
+     * Send a user prompt to the ChatGPT API, handle success or failure,
+     * update local ChatRoom state, sync across devices, and update UI.
+     *
+     * @param context                  Android context for networking and UI
+     * @param contextChatRoom          Current ChatRoom instance holding history
+     * @param userPrompt               The new user prompt string
+     * @param timestamp                Unix timestamp to mark when prompt sent
+     * @param cameFromChatRoomScreen   True if invoked from ChatRoomActivity
+     */
     public static void postPrompt(Context context, ChatRoom contextChatRoom, String userPrompt, long timestamp, Boolean cameFromChatRoomScreen) {
         if (userPrompt.isEmpty()) {
             // Don't send a prompt query if the user prompt is empty

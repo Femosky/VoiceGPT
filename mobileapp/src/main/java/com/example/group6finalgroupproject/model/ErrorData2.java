@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Encapsulates detailed information about an error
+ * returned by the ChatGPT API (v2).
+ */
 public class ErrorData2 {
     private String message;
     private String type;

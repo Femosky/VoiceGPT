@@ -2,6 +2,10 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.List;
 
+/**
+ * Low‑level chat message object used in the OpenAI API payload.
+ * Contains role ("user"/"assistant"), content, and annotations.
+ */
 public class Message {
     private String role;
     private String content;

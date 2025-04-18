@@ -1,5 +1,8 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Breakdown of token usage in the prompt side.
+ */
 public class PromptTokensDetails {
     private int cached_tokens;
     private int audio_tokens;

@@ -1,5 +1,8 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Aggregate token usage info for both prompt and completion.
+ */
 public class Usage {
     private int prompt_tokens;
     private int completion_tokens;

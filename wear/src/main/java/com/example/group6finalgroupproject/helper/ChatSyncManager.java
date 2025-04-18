@@ -39,20 +39,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Manages synchronization of ChatRoom data between Wear OS and phone
+ * Implements both MessageClient.OnMessageReceivedListener and DataClient.OnDataChangedListener
+ */
 public class ChatSyncManager implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private Context context;
     private static final String LISTENER_STATE_PATH = "/listenerState";
     private static final String TAG = "ChatSyncManager";
     private static final String CAPABILITY_NAME = "chatroom_sync";
     private static final String CHATROOM_DATA_PATH = "/chatroom_data";
-//    private JSONArray jsonArrayChatRooms;
 
+    /**
+     * Private constructor to enforce singleton pattern.
+     * @param context current Activity context
+     */
     private ChatSyncManager(Context context) {
         this.context = context;
     }
 
     // Make it a singleton for global use
     private static ChatSyncManager instance;
+
+    /**
+     * Get or create the ChatSyncManager singleton.
+     * Updates internal context when called again.
+     * @param context calling Activity context
+     * @return singleton ChatSyncManager
+     */
     public static synchronized ChatSyncManager getInstance(Context context) {
         if (instance == null) {
             instance = new ChatSyncManager(context);
@@ -66,17 +80,21 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
     }
 
     /**
+     * RECEIVE DATA FROM PHONE
+     * **/
 
-     RECEIVE DATA FROM PHONE
-
-     **/
-
+    /**
+     * Initialize Data Layer listeners for messages and data changes.
+     */
     private void init() {
         Wearable.getMessageClient(context).addListener(this);
         readCurrentListenerState();
         Wearable.getDataClient(context).addListener(this);
     }
 
+    /**
+     * Fetch the current listener state from DataItems for loader UI feedback.
+     */
     private void readCurrentListenerState() {
         Task<DataItemBuffer> task = Wearable.getDataClient(context).getDataItems();
         task.addOnSuccessListener(new OnSuccessListener<DataItemBuffer>() {
@@ -88,12 +106,14 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
                         return;
                     }
                 }
-//                MainActivity2.this.binding.testText.setText("No data");
             }
         });
     }
 
-    // USE IT AS LOADER STATE FOR SYNCING
+    /**
+     * Decode a single byte from DataItem to show syncing state.
+     * @param item DataItem containing listener state byte
+     */
     private void displayListenerState(DataItem item) {
         byte data = item.getData()[0];
         if (data == 0) {
@@ -103,11 +123,13 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         }
     }
 
+    /**
+     * Handle incoming DataEvents (e.g., listener state updates).
+     */
     @Override
     public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
         for (DataEvent event : dataEventBuffer) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
-//                this.binding.testText.setText(context.getString(R.string.test_string_2));
             } else if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
@@ -117,6 +139,10 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         }
     }
 
+    /**
+     * Handle incoming MessageEvent from Wear or phone.
+     * Expects JSON-encoded list of ChatRoom objects.
+     */
     @Override
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
         if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
@@ -170,11 +196,12 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
     }
 
     /**
-
-     SEND TO DATA PHONE
-
+     * SEND TO DATA PHONE
      **/
 
+    /**
+     * Send all locally saved ChatRooms to the connected node (phone or watch).
+     */
     public void sendChatRooms() {
         // Retrieve the current chatrooms from SharedPreferences (or your chosen persistence)
         List<ChatRoom> chatRooms = ChatResponseUtils.getChatRooms(context);
@@ -201,6 +228,9 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         });
     }
 
+    /**
+     * Pick the best node (prefer nearby) and initiate message send.
+     */
     private void sendToNodeForChatRooms(CapabilityInfo capabilityInfo, byte[] data) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
         String bestNodeId = pickBestNodeId(connectedNodes);
@@ -212,6 +242,9 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         sendChatRoomData(data, bestNodeId);
     }
 
+    /**
+     * Choose a nearby node if available, otherwise any node.
+     */
     private String pickBestNodeId(Set<Node> nodes) {
         String bestNodeId = null;
 
@@ -225,6 +258,9 @@ public class ChatSyncManager implements MessageClient.OnMessageReceivedListener,
         return bestNodeId;
     }
 
+    /**
+     * Actually send the byte[] payload over MessageClient to the given nodeId.
+     */
     private void sendChatRoomData(byte[] dataToSend, String nodeId) {
         MessageClient messageClient = Wearable.getMessageClient(context);
         Task<Integer> sendTask = messageClient.sendMessage(nodeId, CHATROOM_DATA_PATH, dataToSend);

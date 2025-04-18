@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
     ChatRoom chatRoom = ChatRoomManager.getChatRoom();
 
+    /**
+     * Configure button listeners
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
         chatSyncManager = ChatSyncManager.getInstance(this);
     }
 
-    // Load startup code for the screen
+    /**
+     * Set up button clicks for reset, mic input, and viewing history
+     * Set up reset button listener
+     */
     private void init() {
         // Set up reset button listener
         binding.resetButton.setOnClickListener(new View.OnClickListener() {
@@ -75,12 +85,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Launch speech recognizer
+     */
     public void startVoiceInputCapture() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         startActivityForResult(intent, SPEECH_REQUEST_CODE);
     }
 
+    /**
+     * Send recognized speech to ChatGPT API on result
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     *                    (various data can be attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -97,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Register the listener when the activity comes to the foreground.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -104,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
         Wearable.getDataClient(this).addListener(chatSyncManager);
     }
 
+    /**
+     * Unregister the listener when the activity goes to the background.
+     */
     @Override
     protected void onPause() {
         super.onPause();

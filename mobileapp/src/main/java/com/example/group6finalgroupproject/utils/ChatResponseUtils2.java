@@ -15,7 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility methods for persisting and retrieving ChatRoom2 objects
+ * from Android SharedPreferences in JSON form.
+ */
 public class ChatResponseUtils2 {
+    /**
+     * Serialize and save a ChatRoom2 into SharedPreferences.
+     * Uses key prefix + chatRoom.getId() to namespace each room.
+     */
     public static void saveMessage(ChatRoom2 chatRoom, Context context) {
         if (chatRoom != null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
@@ -28,6 +36,10 @@ public class ChatResponseUtils2 {
         }
     }
 
+    /**
+     * Load a single ChatRoom2 by its ID from SharedPreferences.
+     * @return ChatRoom2 instance, or null if not found.
+     */
     public static ChatRoom2 getChatRoom(Context context, String chatRoomId) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(
                 context.getString(R.string.chats_sharedPreferencesKey),
@@ -41,6 +53,10 @@ public class ChatResponseUtils2 {
         }
     }
 
+    /**
+     * Retrieve all saved ChatRoom2 objects, sort by most-recent message timestamp,
+     * and return them as a list.
+     */
     public static List<ChatRoom2> getChatRooms(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(context.getString(R.string.chats_sharedPreferencesKey), Context.MODE_PRIVATE);
         List<ChatRoom2> chatRooms = new ArrayList<>();
@@ -70,6 +86,10 @@ public class ChatResponseUtils2 {
         return chatRooms;
     }
 
+    /**
+     * Helper to get the timestamp of the last message in a ChatRoom2.
+     * If no messages, returns the room creation timestamp.
+     */
     public static long getLastTimestamp(ChatRoom2 room) {
         List<MessageItem2> list = room.getChatList();
         if (list != null && !list.isEmpty()) {

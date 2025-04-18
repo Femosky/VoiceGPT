@@ -49,6 +49,14 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private ChatSyncManager chatSyncManager;
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     * Initialize TextToSpeech before loading the UI
+     * Set up RecyclerView, listeners, and handle any incoming voice-trigger
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +73,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         chatSyncManager = ChatSyncManager.getInstance(this);
     }
 
+    /**
+     * Initialize the TextToSpeech engine for reading messages.
+     * Queues up any pending text until initialization completes.
+     */
     private void initializedTextToSpeech() {
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -89,7 +101,16 @@ public class ChatRoomActivity extends AppCompatActivity {
         });
     }
 
-    // Load start up code
+    /**
+     * Configure RecyclerView for messages, scroll to latest,
+     * retrieve the ChatRoom object, and set up UI listeners.
+     *
+     * Set up chat list UI
+     * Retrieve chatRoomId passed from history or MainActivity
+     * Show newest messages at bottom
+     * Scroll immediately to the latest message
+     * If coming from history, read out the last AI response
+     */
     public void init() {
         WearableRecyclerView recyclerView = binding.recyclerView;
         recyclerView.setHasFixedSize(true);
@@ -132,6 +153,11 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Wire up button clicks: replay last message, start new chat, and record speech input
+     * Reset conversation and return to main
+     * Trigger voice input capture
+     */
     private void loadListeners() {
         binding.reListenButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +190,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Speak the given text via TTS, or queue it if TTS isn’t ready.
+     */
     public void speakText(String text) {
         if (textToSpeech != null) {
             if (!ttsInitialized) {
@@ -177,6 +206,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Reload messages from storage, update the adapter, and scroll to the bottom
+     */
     public void refreshChatRoom() {
         // always show the singleton
         chatRoom = ChatResponseUtils.getChatRoom(this, chatRoomId);
@@ -191,12 +223,27 @@ public class ChatRoomActivity extends AppCompatActivity {
         Log.i("MainActivity2", "Chat room refreshed!");
     }
 
+    /**
+     * Launch Android’s built-in speech recognizer
+     */
     public void startVoiceInputCapture() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         startActivityForResult(intent, SPEECH_REQUEST_CODE);
     }
 
+    /**
+     * Handle the result of speech input and send prompt to ChatGPT API
+     * Post prompt and expect a TTS callback on response
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     *                    (various data can be attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -213,6 +260,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Clean up TTS resources
+     */
     @Override
     protected void onDestroy() {
         if (textToSpeech != null) {
@@ -222,6 +272,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * Register the listener when the activity comes to the foreground.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,6 +282,9 @@ public class ChatRoomActivity extends AppCompatActivity {
         Wearable.getDataClient(this).addListener(chatSyncManager);
     }
 
+    /**
+     * Unregister the listener when the activity goes to the background.
+     */
     @Override
     protected void onPause() {
         super.onPause();

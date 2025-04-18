@@ -1,5 +1,8 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Wrapper for API error responses.
+ */
 public class ErrorResponse {
     private ErrorData error;
 

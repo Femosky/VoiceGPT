@@ -2,6 +2,11 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.List;
 
+/**
+ * Represents the full API response from ChatGPT for a single request.
+ * Contains metadata (id, model, timestamps), a list of Choice2 objects,
+ * usage statistics, and service tier information.
+ */
 public class ChatResponse2 {
     private String id;
     private String object;

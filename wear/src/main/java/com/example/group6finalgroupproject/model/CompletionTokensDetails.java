@@ -1,5 +1,8 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Detailed breakdown of token usage in the completion.
+ */
 public class CompletionTokensDetails {
     private int reasoning_tokens;
     private int audio_tokens;

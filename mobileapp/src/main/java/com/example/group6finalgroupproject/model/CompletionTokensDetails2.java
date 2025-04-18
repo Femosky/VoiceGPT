@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Detailed breakdown of token usage in the completion portion
+ * of the ChatGPT API response. Helps analyze cost and performance.
+ */
 public class CompletionTokensDetails2 {
     private int reasoning_tokens;
     private int audio_tokens;

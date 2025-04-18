@@ -1,5 +1,9 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Aggregated token usage statistics for both prompt and completion
+ * returned by the ChatGPT API.
+ */
 public class Usage2 {
     private int prompt_tokens;
     private int completion_tokens;

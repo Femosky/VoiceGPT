@@ -2,6 +2,10 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.UUID;
 
+/**
+ * Represents a single message in a ChatRoom,
+ * including metadata such as sender and timestamp.
+ */
 public class MessageItem {
     private String id;
     private long created;

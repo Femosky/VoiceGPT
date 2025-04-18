@@ -37,7 +37,21 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+/**
+ * Handles communication with the ChatGPT API for version2 of the app.
+ * Builds request payloads, sends HTTP calls, processes responses,
+ * updates local chat storage, syncs to Wear OS, and refreshes UI.
+ */
 public class ChatGPTAPI2 {
+    /**
+     * Constructs the JSON payload for the ChatGPT completion endpoint.
+     * Includes model selection, store flag, past conversation context, and new user prompt.
+     *
+     * @param context          app Context for string resources
+     * @param contextChatRoom  current ChatRoom2 containing message history
+     * @param userPrompt       the new prompt text from the user
+     * @return JSONObject representing the request body, or null on error
+     */
     private static JSONObject parseStringToJSONObject(Context context, ChatRoom2 contextChatRoom, String userPrompt) {
         // Build the chat completion payload
         try {
@@ -73,6 +87,16 @@ public class ChatGPTAPI2 {
             return null;
         }
     }
+
+    /**
+     * Sends the user prompt and conversation context to ChatGPT API.
+     * On success, updates the ChatRoom2, persists it, syncs to watch, and refreshes UI.
+     *
+     * @param context         app Context for networking and UI callbacks
+     * @param contextChatRoom current ChatRoom2 holding the conversation
+     * @param userPrompt      new prompt text
+     * @param timestamp       Unix timestamp when user sent the prompt
+     */
     public static void postPrompt(Context context, ChatRoom2 contextChatRoom, String userPrompt, long timestamp) {
         if (userPrompt.isEmpty()) {
             // Don't send a prompt query if the user prompt is empty
@@ -190,6 +214,12 @@ public class ChatGPTAPI2 {
         }
     }
 
+    /**
+     * Refreshes the MainActivity2 UI by invoking its refreshChatRoom method.
+     * Must be called on the UI thread.
+     *
+     * @param context Activity context to cast and refresh
+     */
     public static void refreshPage(Context context) {
         // Runs on the UI thread
         if (context instanceof MainActivity2) {
@@ -200,6 +230,12 @@ public class ChatGPTAPI2 {
         }
     }
 
+    /**
+     * Stops the loading indicator in MainActivity2 by setting isLoading = false.
+     * Must be called on the UI thread.
+     *
+     * @param context Activity context to cast and update
+     */
     public static void stopLoading(Context context) {
         // Runs on the UI thread
         if (context instanceof MainActivity2) {

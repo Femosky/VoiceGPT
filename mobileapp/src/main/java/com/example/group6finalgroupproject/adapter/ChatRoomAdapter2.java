@@ -15,6 +15,10 @@ import com.example.group6finalgroupproject.databinding.ChatRoomItem2Binding;
 import com.example.group6finalgroupproject.model.ChatRoom2;
 import com.example.group6finalgroupproject.model.MessageItem2;
 
+/**
+ * Adapter for displaying messages within a ChatRoom2 in MainActivity2.
+ * Aligns user messages to the right and assistant messages to the left.
+ */
 public class ChatRoomAdapter2 extends RecyclerView.Adapter<ChatRoomAdapter2.ChatRoomViewHolder2> {
     private ChatRoom2 chatRoom;
     ActivityMain2Binding binding;
@@ -23,7 +27,9 @@ public class ChatRoomAdapter2 extends RecyclerView.Adapter<ChatRoomAdapter2.Chat
         this.chatRoom = room;
     }
 
-    // Setters
+    /**
+     * Update which chat room is displayed
+     */
     public void setChatRoom(ChatRoom2 chatRoom) {
         this.chatRoom = chatRoom;
     }
@@ -47,6 +53,9 @@ public class ChatRoomAdapter2 extends RecyclerView.Adapter<ChatRoomAdapter2.Chat
         return chatRoom.getChatList().size();
     }
 
+    /**
+     * ViewHolder for a single message bubble
+     */
     public static class ChatRoomViewHolder2 extends RecyclerView.ViewHolder {
         private final ChatRoomItem2Binding binding;
 
@@ -55,6 +64,9 @@ public class ChatRoomAdapter2 extends RecyclerView.Adapter<ChatRoomAdapter2.Chat
             this.binding = binding;
         }
 
+        /**
+         * Bind message text, choose background, and set alignment
+         */
         public void bind(MessageItem2 messageItem) {
             Context context = binding.getRoot().getContext();
             String message = messageItem.getMessage();

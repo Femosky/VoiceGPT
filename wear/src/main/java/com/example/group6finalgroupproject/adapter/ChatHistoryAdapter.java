@@ -19,12 +19,17 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
     ActivityChatHistoryBinding binding;
     private OnItemClickListener listener;
 
-    // Define an interface for click callbacks
+    /**
+     * Callback interface for item taps
+     */
     public interface OnItemClickListener {
         void onItemClick(ChatRoom chatRoom);
     }
 
-    // Setter for the listener
+    /**
+     * @param listener
+     * Allow activity to register a click listener
+     */
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
@@ -45,17 +50,28 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
         return new ChatHistoryViewHolder(binding);
     }
 
+    /**
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ChatHistoryViewHolder holder, int position) {
         ChatRoom chatRoom = chatRooms.get(position);
         holder.bind(chatRoom, listener);
     }
 
+    /**
+     * @return
+     */
     @Override
     public int getItemCount() {
         return chatRooms.size();
     }
 
+    /**
+     * ViewHolder for a single history entry
+     */
     public static class ChatHistoryViewHolder extends RecyclerView.ViewHolder {
         private final ChatHistoryItemBinding binding;
 
@@ -64,6 +80,12 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
             this.binding = binding;
         }
 
+        /**
+         * Bind title text and click callback for each item.
+         *
+         * @param chatRoom
+         * @param listener
+         */
         public void bind(final ChatRoom chatRoom, final OnItemClickListener listener) {
             String title = chatRoom.getTitle();
             binding.chatTitle.setText(title);

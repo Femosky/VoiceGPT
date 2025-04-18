@@ -1,5 +1,8 @@
 package com.example.group6finalgroupproject.model;
 
+/**
+ * Top-level error response wrapper when the API returns an error.
+ */
 public class ErrorResponse2 {
     private ErrorData2 error;
 

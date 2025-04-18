@@ -25,6 +25,10 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity displaying a list of past chat rooms.
+ * Uses a RecyclerView to show titles and allows tapping to re-enter a conversation.
+ */
 public class ChatHistoryActivity2 extends AppCompatActivity {
 
     ActivityChatHistory2Binding binding;
@@ -46,7 +50,10 @@ public class ChatHistoryActivity2 extends AppCompatActivity {
         chatSyncManager = ChatSyncManager2.getInstance(this);
     }
 
-    // Load setup code
+    /**
+     * Set up the RecyclerView with LinearLayoutManager and adapter.
+     * Loads chat rooms from storage and handles item clicks.
+     */
     private void init() {
         RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setHasFixedSize(true);
@@ -67,6 +74,9 @@ public class ChatHistoryActivity2 extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Refresh the RecyclerView data when new chat rooms arrive via sync.
+     */
     public void refreshHistoryList() {
         chatRooms = ChatResponseUtils2.getChatRooms(ChatHistoryActivity2.this);
 

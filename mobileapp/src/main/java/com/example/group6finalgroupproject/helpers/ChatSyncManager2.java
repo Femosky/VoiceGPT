@@ -42,6 +42,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Handles syncing ChatRoom2 data between phone and Wear OS:
+ * - Receives messages/data from the watch
+ * - Saves and merges incoming chat rooms
+ * - Notifies UI to refresh
+ * - Sends local chat rooms to the watch on demand
+ */
 public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private Context context;
     private static final String LISTENER_STATE_PATH = "/listenerState";
@@ -49,6 +56,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
     private static final String CAPABILITY_NAME = "chatroom_sync";
     private static final String TAG = "ChatSyncManager";
 
+    /** Private constructor to enforce singleton pattern. */
     private ChatSyncManager2(Context context) {
 //        this.context = context.getApplicationContext();
         this.context = context;
@@ -56,6 +64,10 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
 
     // Make it a singleton for global use
     private static ChatSyncManager2 instance;
+
+    /**
+     * Get or create the singleton instance, updating context if needed.
+     */
     public static synchronized ChatSyncManager2 getInstance(Context context) {
         if (instance == null) {
             instance = new ChatSyncManager2(context);
@@ -72,12 +84,15 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
      RECEIVE DATA FROM WATCH
 
      **/
+
+    /** Begin listening for message and data events from Wear OS. */
     private void init() {
         Wearable.getMessageClient(context).addListener(this);
         readCurrentListenerState();
         Wearable.getDataClient(context).addListener(this);
     }
 
+    /** Fetch existing listener-state items (e.g., sync-in-progress flag). */
     private void readCurrentListenerState() {
         Task<DataItemBuffer> task = Wearable.getDataClient(context).getDataItems();
         task.addOnSuccessListener(new OnSuccessListener<DataItemBuffer>() {
@@ -89,12 +104,11 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
                         return;
                     }
                 }
-//                MainActivity2.this.binding.testText.setText("No data");
             }
         });
     }
 
-    // USE IT AS LOADER STATE FOR SYNCING
+    /** Decode a single-byte DataItem into syncing/not-syncing state. */
     private void displayListenerState(DataItem item) {
         byte data = item.getData()[0];
         if (data == 0) {
@@ -104,11 +118,11 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
         }
     }
 
+    /** Handle data events (e.g., listener state changes). */
     @Override
     public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
         for (DataEvent event : dataEventBuffer) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
-//                this.binding.testText.setText(context.getString(R.string.test_string_2));
             } else if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().equals(LISTENER_STATE_PATH)) {
@@ -118,6 +132,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
         }
     }
 
+    /** Handle incoming message events containing chat-room JSON. */
     @Override
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
         if (messageEvent.getPath().equals(CHATROOM_DATA_PATH)) {
@@ -175,6 +190,11 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
     SEND DATA TO WATCH
 
      **/
+
+    /**
+     * Send all locally stored ChatRoom2 objects to the watch.
+     * Discovers the best node via capability lookup.
+     */
     public void sendChatRooms() {
         // Retrieve the current chatrooms from SharedPreferences (or your chosen persistence)
         List<ChatRoom2> chatRooms = ChatResponseUtils2.getChatRooms(context);
@@ -201,6 +221,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
         });
     }
 
+    /** Choose the best nearby node (or any) and send data to it. */
     private void sendToNodeForChatRooms(CapabilityInfo capabilityInfo, byte[] data) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
         String bestNodeId = pickBestNodeId(connectedNodes);
@@ -212,6 +233,10 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
         sendChatRoomData(data, bestNodeId);
     }
 
+    /**
+     * @param nodes
+     * @return
+     */
     private String pickBestNodeId(Set<Node> nodes) {
         String bestNodeId = null;
 
@@ -225,6 +250,7 @@ public class ChatSyncManager2 implements MessageClient.OnMessageReceivedListener
         return bestNodeId;
     }
 
+    /** Actually push the payload to the chosen node via MessageClient. */
     private void sendChatRoomData(byte[] dataToSend, String nodeId) {
         MessageClient messageClient = Wearable.getMessageClient(context);
         Task<Integer> sendTask = messageClient.sendMessage(nodeId, CHATROOM_DATA_PATH, dataToSend);

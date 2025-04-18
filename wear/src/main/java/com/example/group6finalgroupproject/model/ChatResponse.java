@@ -2,6 +2,10 @@ package com.example.group6finalgroupproject.model;
 
 import java.util.List;
 
+/**
+ * Represents the full response from the ChatGPT API,
+ * including choices, usage stats, and service tier.
+ */
 public class ChatResponse {
     private String id;
     private String object;
