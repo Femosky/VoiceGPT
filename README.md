@@ -2,6 +2,7 @@
 - Replace the api key with your own ChatGPT API key in the "chatGPTApiKey" String variable in "defaultConfig" of the both "build.gradle.kts" files. (There is one for the "wear" and "mobileapp" module)
 - In the "local.properties", replace "sdk.dir" with the directory path of where you cloned or saved the project on your computer.
 - Make sure your android devices (wear and mobile), whether physical device or emulator, are paired using the "Google Pixel Watch" app or whichever wearable pairing apps you prefer.
+- The TextToSpeech engine on the Wear app only works on devices that on or above API 34. Otherwise, you will stil be able to view the assistant responses via text.
 
 # Android Wear Development: Final Group Project
 
