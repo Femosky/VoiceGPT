@@ -1,3 +1,7 @@
+## NOTE: IF YOU WANT TO TEST THIS PROJECT - MAKE SURE TO DO THE FOLLOWING
+- Replace the api key with your own ChatGPT API key in the "chatGPTApiKey" String variable in "defaultConfig" of the both "build.gradle.kts" files. (There is one for the "wear" and "mobileapp" module)
+- In the "local.properties", replace "sdk.dir" with the directory path of where you cloned or saved the project on your computer.
+
 # Android Wear Development: Final Group Project
 
 ![VoiceGPT Logo](./app-logo/VoiceGPT-logo.png)
