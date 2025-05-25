@@ -4,7 +4,11 @@
 - Make sure your android devices (wear and mobile), whether physical device or emulator, are paired using the "Google Pixel Watch" app or whichever wearable pairing apps you prefer.
 - The TextToSpeech engine on the Wear app only works on devices that are on or above API 34. Otherwise, you will stil be able to view the assistant responses via text.
 
-# Android Wear Development: Final Group Project
+---
+
+## Project Title
+
+**VoiceGPT – Smart Voice Assistant for Wear OS & Android**
 
 ![VoiceGPT Logo](./app-logo/VoiceGPT-logo.png)
 
@@ -17,28 +21,6 @@
 3. [Project Description](#project-description)
     - [Wear OS App](#wear-os-app)
     - [Android App](#android-app)
-
----
-
-## Group Details
-
-**Group Name:**  
-_GroupProjSec1-6 (Group 6)_
-
-**Group Members:**
-
-| S. No. | Student ID | Student Name                       |
-|-------:|-----------:|------------------------------------|
-|      1 |    8970204 | Gurjot Singh Saini                 |
-|      2 |    8969004 | Sonam Rani                         |
-|      3 |    8919998 | Olufemi Emmanuel Ojeyemi           |
-|      4 |    8967584 | Arshdeep Singh                     |
-
----
-
-## Project Title
-
-**VoiceGPT – Smart Voice Assistant for Wear OS & Android**
 
 ---
 
