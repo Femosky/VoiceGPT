@@ -53,7 +53,7 @@ An intelligent, voice‑powered AI assistant available on both Wear OS smartwatc
    - Click on the three dots on the Pixel and click on `Pair Wearable`.
    - Follow the pairing process that automatically installs the `Google Pixel Watch` app on both emulators.
    
-   <img width=30% height=30% alt="pair wearable screenshot" src="https://github.com/user-attachments/assets/e8981b6c-7099-4e7c-9fde-4dbf398ce97d" />
+   <img width=100% alt="pair wearable screenshot" src="https://github.com/user-attachments/assets/e8981b6c-7099-4e7c-9fde-4dbf398ce97d" />
 
 5. **Run the project on both emulators.**
 
