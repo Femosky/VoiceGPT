@@ -61,45 +61,52 @@ An intelligent, voice‑powered AI assistant available on both Wear OS smartwatc
 
 ## 📂 Project Structure
 
-VoiceGPT/
-├── mobileapp/                      # Android phone module
-│   ├── manifests/                  # AndroidManifest.xml
-│   ├── java/com/example/           # App package namespace
-│   │   └── com.example.group6finalgroupproject/
-│   │       ├── activity/           # Activities & Compose entry points
-│   │       ├── adapter/            # RecyclerView adapters (if used)
-│   │       ├── helpers/            # Helper classes (permissions, UI utils)
-│   │       ├── model/              # Data models (Request/Response DTOs)
-│   │       ├── service/            # Retrofit/OpenAI API service interfaces
-│   │       └── utils/              # Utility functions (coroutines, logging)
-│   ├── res/                        # XML layouts, drawables, strings, etc.
-│   │   ├── drawable/
-│   │   ├── layout/
-│   │   ├── menu/
-│   │   ├── mipmap/
-│   │   └── values/
-│   └── build.gradle.kts            # Module-level build file
-│
-├── wear/                           # Wear OS watch module
-│   ├── manifests/
-│   ├── java/com/example/
-│   │   └── com.example.group6finalgroupproject/
-│   │       ├── activity/           # Wear-specific Activities & Compose UIs
-│   │       ├── adapter/            # (If lists are shown on watch)
-│   │       ├── helper/             # Permission & speech helpers for Wear
-│   │       ├── model/              # Shared data models
-│   │       ├── service/            # API clients (OpenAI, etc.)
-│   │       └── utils/              # Utility functions (TTS, logging)
-│   ├── res/
-│   │   ├── drawable/
-│   │   ├── layout/
-│   │   ├── mipmap/
-│   │   └── values/
-│   └── build.gradle.kts
-│
-├── build.gradle.kts                # Top-level Gradle Kotlin DSL config
-├── settings.gradle.kts             # Modules inclusion
-├── gradle.properties               # Global Gradle settings
-├── local.properties                # (Not committed) Holds OPENAI_API_KEY
-├── gradlew / gradlew.bat            # Gradle wrapper scripts
-└── gradle/                         # Gradle wrapper files
+| Path                                                                      | Description                                         |
+| ------------------------------------------------------------------------- | --------------------------------------------------- |
+| `VoiceGPT/`                                                               | Project root directory                              |
+| `VoiceGPT/mobileapp/`                                                     | Android phone module                                |
+| `VoiceGPT/mobileapp/manifests/`                                           | AndroidManifest.xml                                 |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/activity/`   | Activities & Compose entry points                   |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/adapter/`    | RecyclerView adapters (if used)                     |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/helpers/`    | Helper classes (permissions, UI utils)              |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/model/`      | Data models (Request/Response DTOs)                 |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/service/`    | Retrofit/OpenAI API service interfaces              |
+| `VoiceGPT/mobileapp/java/com/example/group6finalgroupproject/utils/`      | Utility functions (coroutines, logging)             |
+| `VoiceGPT/mobileapp/res/`                                                 | XML layouts, drawables, strings, etc.               |
+| `VoiceGPT/mobileapp/res/drawable/`                                        | Drawable resources                                  |
+| `VoiceGPT/mobileapp/res/layout/`                                          | Layout XML files                                    |
+| `VoiceGPT/mobileapp/res/menu/`                                            | Menu resource files                                 |
+| `VoiceGPT/mobileapp/res/mipmap/`                                          | Launcher icons                                      |
+| `VoiceGPT/mobileapp/res/values/`                                          | Values resources (strings, dimensions, styles)      |
+| `VoiceGPT/mobileapp/build.gradle.kts`                                     | Module-level Gradle build script                    |
+| `VoiceGPT/wear/`                                                          | Wear OS watch module                                |
+| `VoiceGPT/wear/manifests/`                                                | AndroidManifest.xml for Wear OS                     |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/activity/`        | Wear-specific Activities & Compose UIs              |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/adapter/`         | (If lists are shown on watch)                       |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/helper/`          | Permission & speech helpers for Wear OS             |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/model/`           | Shared data models                                  |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/service/`         | API clients (OpenAI, etc.)                          |
+| `VoiceGPT/wear/java/com/example/group6finalgroupproject/utils/`           | Utility functions (TTS, logging)                    |
+| `VoiceGPT/wear/res/`                                                      | XML layouts, drawables, strings for Wear OS         |
+| `VoiceGPT/wear/res/drawable/`                                             | Drawable resources                                  |
+| `VoiceGPT/wear/res/layout/`                                               | Layout XML files                                    |
+| `VoiceGPT/wear/res/mipmap/`                                               | Launcher icons                                      |
+| `VoiceGPT/wear/res/values/`                                               | Values resources (strings, dimensions, styles)      |
+| `VoiceGPT/wear/build.gradle.kts`                                          | Wear OS module Gradle build script                  |
+| `VoiceGPT/build.gradle.kts`                                               | Top-level Gradle Kotlin DSL configuration           |
+| `VoiceGPT/settings.gradle.kts`                                            | Modules inclusion settings                          |
+| `VoiceGPT/gradle.properties`                                              | Global Gradle settings                              |
+| `VoiceGPT/local.properties`                                               | (Not committed) Holds `OPENAI_API_KEY`              |
+| `VoiceGPT/gradlew` / `VoiceGPT/gradlew.bat`                               | Gradle wrapper scripts                              |
+| `VoiceGPT/gradle/`                                                        | Gradle wrapper files                                |
+
+
+--- 
+
+## 📄 License
+
+Distributed under the MIT License. See LICENSE for more details.
+
+## ✉️ Contact
+
+[Contact me here](https://femiojeyemi.com/contact)
